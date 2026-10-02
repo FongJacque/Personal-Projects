@@ -6,15 +6,24 @@
     <title>Jacque Fong | Portfolio</title>
     <style>
         :root { 
-            --bg: #f4efe8; 
-            --card: #ffffff; 
-            --text: #2c2520; 
-            --primary: #0066cc; 
-            --nav-bg: #1e293b; 
+            --bg-base: #e6dccf;
+            --bg-streak: #dfd4c5;
+            --text: #2d241e; 
+            --primary: #8b5a2b;
+            --primary-hover: #6e441f;
+            --nav-bg: #2b231d; 
+            --card-bg: rgba(255, 255, 255, 0.65);
         }
         body { 
             font-family: system-ui, -apple-system, sans-serif; 
-            background: var(--bg); 
+            background: repeating-linear-gradient(
+                90deg,
+                var(--bg-base),
+                var(--bg-base) 120px,
+                var(--bg-streak) 121px,
+                var(--bg-base) 122px,
+                var(--bg-base) 240px
+            );
             color: var(--text); 
             margin: 0; 
             padding: 0; 
@@ -29,9 +38,10 @@
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
-        nav a { color: white; text-decoration: none; font-weight: 600; margin-left: 1.5rem; }
-        nav .brand { margin-left: 0; font-size: 1.25rem; color: #60a5fa; }
+        nav a { color: #f4efe8; text-decoration: none; font-weight: 600; margin-left: 1.5rem; }
+        nav .brand { margin-left: 0; font-size: 1.25rem; color: #dcb88f; }
         
         .hero-container {
             flex: 1;
@@ -41,33 +51,65 @@
             padding: 2rem;
         }
         .hero { 
-            max-width: 800px; 
+            max-width: 650px; 
             text-align: center; 
+            background: var(--card-bg);
+            padding: 3rem;
+            border-radius: 1rem;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 10px 30px rgba(45,36,30,0.08);
+            border: 1px solid rgba(255,255,255,0.4);
         }
         h1 { 
             font-size: 3.5rem; 
             margin: 0 0 1rem 0; 
-            color: #1e1b18; 
+            color: #1a130e; 
         }
         p { 
             font-size: 1.35rem; 
-            color: #54493f; 
+            color: #4a3e35; 
             line-height: 1.6; 
             margin: 0 0 2rem 0;
+        }
+        .actions-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.25rem;
         }
         .cta-btn { 
             display: inline-block; 
             background: var(--primary); 
             color: white; 
-            padding: 0.85rem 1.75rem; 
+            padding: 0.9rem 2rem; 
             text-decoration: none; 
             border-radius: 0.5rem; 
             font-weight: bold; 
-            transition: background 0.2s, transform 0.2s; 
+            box-shadow: 0 4px 12px rgba(139,90,43,0.25);
+            transition: all 0.2s ease; 
         }
         .cta-btn:hover { 
-            background: #004c99; 
+            background: var(--primary-hover); 
             transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(139,90,43,0.35);
+        }
+        .social-links {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 0.5rem;
+        }
+        .social-links a {
+            color: #5c4d41;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.05rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: color 0.2s;
+        }
+        .social-links a:hover {
+            color: var(--primary-hover);
         }
     </style>
 </head>
@@ -86,9 +128,14 @@
         <div class="hero">
             <h1>Hi, I'm Jacque Fong</h1>
             <p>Data Scientist & Engineer specializing in R, Python, and Computer Vision development.</p>
-            <a href="/projects.html" class="cta-btn">View My Work</a>
+            <div class="actions-wrapper">
+                <a href="/projects.html" class="cta-btn">View My Work</a>
+                <div class="social-links">
+                    <a href="https://github.com/FongJacque" target="_blank">🐙 GitHub</a>
+                    <a href="https://www.linkedin.com/in/jacque-j-fong/" target="_blank">💼 LinkedIn</a>
+                </div>
+            </div>
         </div>
     </div>
 </body>
 </html>
-
