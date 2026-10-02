@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Federated Lasso Regression</title>
+    <style>
+        body { font-family: system-ui, sans-serif; max-width: 700px; margin: 40px auto; padding: 20px; line-height: 1.6; color: #333; }
+        h1 { color: #111; border-bottom: 2px solid #0066cc; padding-bottom: 10px; }
+        h2 { color: #444; margin-top: 30px; }
+        .btn { display: inline-block; background: #0066cc; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 15px; }
+        .btn:hover { background: #004c99; }
+        code { background: #eee; padding: 2px 6px; border-radius: 4px; font-family: monospace; }
+        pre { background: #222; color: #fff; padding: 15px; border-radius: 6px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Federated Lasso Regression</h1>
+    <p>This project implements a decentralized, federated approach to Lasso regression using Python optimization techniques.</p>
+    
+    <h2>Project Components</h2>
+    <ul>
+        <li><code>01_data_loading.py</code> - Handles data preprocessing and ingestion pipelines.</li>
+        <li><code>02_core_optimization_operators.py</code> - Contains mathematical functions for Lasso optimization.</li>
+        <li><code>03_hyperparameter_protocol.py</code> - Manages regularization parameter settings.</li>
+        <li><code>04_synchronous_global_loop.py</code> - Coordinates the federated aggregation across simulated nodes.</li>
+    </ul>
+
+    <h2>How to Run</h2>
+    <p>Execute the main controller script in your terminal to see the simulation run:</p>
+    <pre><code>python run_project.py</code></pre>
+</body>
+</html>
