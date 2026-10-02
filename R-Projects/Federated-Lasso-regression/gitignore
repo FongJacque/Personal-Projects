@@ -1,0 +1,13 @@
+# Real assignment data — never commit, only synthetic data belongs in the repo
+data/node*_X_train.csv
+data/node*_X_val.csv
+data/node*_y_train.csv
+data/node*_y_val.csv
+
+# But DO keep the true beta used for synthetic recovery checks
+!data/beta_true.npy
+
+# Standard Python housekeeping
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
