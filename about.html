@@ -5,13 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Me | Jacque Fong</title>
     <style>
-        :root { --bg: #f8f9fa; --card: #ffffff; --text: #212529; --primary: #0066cc; --nav-bg: #1e293b; }
-        body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; }
-        nav { background: var(--nav-bg); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
-        nav a { color: white; text-decoration: none; font-weight: 600; margin-left: 1.5rem; }
-        nav .brand { margin-left: 0; font-size: 1.25rem; color: #60a5fa; }
-        .container { max-width: 700px; margin: 50px auto; padding: 0 2rem; line-height: 1.7; }
-        h1 { border-bottom: 2px solid var(--primary); padding-bottom: 0.5rem; }
+        :root { 
+            --bg-base: #e6dccf;
+            --bg-streak: #dfd4c5;
+            --text: #2d241e; 
+            --primary: #8b5a2b; 
+            --nav-bg: #2b231d; 
+            --card-bg: rgba(255, 255, 255, 0.75);
+        }
+        body { 
+            font-family: system-ui, -apple-system, sans-serif; 
+            background: repeating-linear-gradient(90deg, var(--bg-base), var(--bg-base) 120px, var(--bg-streak) 121px, var(--bg-base) 122px, var(--bg-base) 240px);
+            color: var(--text); 
+            margin: 0; 
+            padding: 0;
+        }
+        nav { 
+            background: var(--nav-bg); 
+            padding: 1rem 2rem; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        nav a { color: #f4efe8; text-decoration: none; font-weight: 600; margin-left: 1.5rem; }
+        nav .brand { margin-left: 0; font-size: 1.25rem; color: #dcb88f; }
+        
+        .container { 
+            max-width: 700px; 
+            margin: 50px auto; 
+            padding: 2.5rem; 
+            line-height: 1.8; 
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(45,36,30,0.06);
+            border: 1px solid rgba(255,255,255,0.5);
+            backdrop-filter: blur(3px);
+        }
+        h1 { 
+            color: #1a130e;
+            border-bottom: 2px solid #baab98; 
+            padding-bottom: 0.5rem; 
+            margin-top: 0;
+        }
+        p {
+            font-size: 1.15rem;
+            color: #3d3128;
+        }
     </style>
 </head>
 <body>
@@ -26,8 +66,8 @@
     </nav>
     <div class="container">
         <h1>About Me</h1>
-        <p>I am currently a Senior at UCLA, studying Statistics and Data Science. I previously worked as a Data Analyst in the US Army for 9 years, where I learned to love working with data. I decided to pivot into the civilian sector and decided it was a good time to go back to school.
-        I personally am fascinated with data (through R), programming (with both Python and C++), and want to learn more about Computer Vision as a means to understand higher level programming.</p>
+        <p>I am currently a Senior at UCLA, studying Statistics and Data Science. I previously worked as a Data Analyst in the US Army for 9 years, where I learned to love working with data. I decided to pivot into the civilian sector and decided it was a good time to go back to school.</p>
+        <p>I personally am fascinated with data (through R), programming (with both Python and C++), and want to learn more about Computer Vision as a means to understand higher level programming.</p>
     </div>
 </body>
 </html>
