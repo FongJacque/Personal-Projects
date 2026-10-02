@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume | Jacque Fong</title>
+    <style>
+        :root { --bg: #f8f9fa; --card: #ffffff; --text: #212529; --primary: #0066cc; --nav-bg: #1e293b; }
+        body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; }
+        nav { background: var(--nav-bg); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        nav a { color: white; text-decoration: none; font-weight: 600; margin-left: 1.5rem; }
+        nav .brand { margin-left: 0; font-size: 1.25rem; color: #60a5fa; }
+        .container { max-width: 800px; margin: 40px auto; padding: 0 2rem; text-align: center; }
+        h1 { color: #0f172a; margin-bottom: 0.5rem; }
+        .subtitle { color: #64748b; margin-bottom: 2rem; }
+        .resume-link { display: inline-block; position: relative; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; text-decoration: none; }
+        .resume-link:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.15); }
+        .resume-img { max-width: 100%; height: auto; display: block; border: 1px solid #e2e8f0; }
+        .resume-link::after { content: "⬇ Click to Download Uneditable PDF"; position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0, 102, 204, 0.9); color: white; padding: 12px; font-weight: bold; font-size: 0.95rem; opacity: 0; transition: opacity 0.3s ease; }
+        .resume-link:hover::after { opacity: 1; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="brand">Jacque Fong</a>
+        <div>
+            <a href="/">Home</a>
+            <a href="/about.html">About Me</a>
+            <a href="/projects.html">Projects</a>
+            <a href="/resume.html">Resume</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <h1>My Resume</h1>
+        <p class="subtitle">Click the image below to view and download the official PDF version.</p>
+        <a href="/resume.pdf" download="Jacque_Fong_Resume.pdf" class="resume-link">
+            <img src="/resume-preview.png" alt="Jacque Fong Resume Preview" class="resume-img">
+        </a>
+    </div>
+</body>
+</html>
