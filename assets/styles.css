@@ -129,7 +129,6 @@ img { max-width: 100%; height: auto; }
     .container { margin: 1.5rem auto; padding: 0 1rem; }
     .card { padding: 1.5rem; }
 }
-
 .hero-container {
     display: flex;
     justify-content: center;
@@ -190,6 +189,7 @@ img { max-width: 100%; height: auto; }
 .resume-page .subtitle { color: var(--text-muted); margin: 0 0 2rem; font-size: 1.1rem; }
 
 .resume-preview {
+    position: relative;
     display: inline-block;
     max-width: 650px;
     border-radius: 8px;
@@ -203,17 +203,15 @@ img { max-width: 100%; height: auto; }
 }
 .resume-preview img { display: block; width: 100%; border: 1px solid rgba(0, 0, 0, 0.05); }
 
-.resume-actions {
-    margin-top: 2rem;
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 1rem;
+.resume-preview::after {
+    content: "⬇  Click to download PDF";
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    padding: 14px;
+    background: rgba(139, 90, 43, 0.95);
+    color: #fff;
+    font-weight: 700;
+    opacity: 0;
+    transition: opacity 0.3s;
 }
-.btn-outline {
-    background: transparent;
-    color: var(--primary);
-    border: 2px solid var(--primary);
-    box-shadow: none;
-}
-.btn-outline:hover { background: var(--primary); color: #fff; }
+.resume-preview:hover::after { opacity: 1; }
