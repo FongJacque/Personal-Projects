@@ -163,24 +163,24 @@ img { max-width: 100%; height: auto; }
 .actions {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     gap: 1.25rem;
 }
 
 .social-links { display: flex; gap: 1.25rem; }
 .social-links a {
-    color: var(--text-muted);
     font-size: 2rem;
     line-height: 1;
     text-decoration: none;
-    transition: color 0.2s, transform 0.2s;
+    transition: opacity 0.2s, transform 0.2s;
 }
-.social-links a:hover { color: var(--primary); transform: translateY(-2px); }
+.social-links .github   { color: #181717; }
+.social-links .linkedin { color: #0a66c2; }
+.social-links a:hover   { opacity: 0.75; transform: translateY(-2px); }
 
 @media (max-width: 760px) {
     .hero { flex-direction: column; text-align: center; gap: 1.75rem; padding: 2rem 1.5rem; }
     .hero-text { text-align: center; }
     .hero-photo { width: 180px; height: 180px; }
     .hero p { font-size: 1.1rem; }
-    .actions { align-items: center; }
 }
