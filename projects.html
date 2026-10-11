@@ -4,116 +4,128 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Projects | Jacque Fong</title>
-    <style>
-        :root { 
-            --bg-base: #e6dccf;
-            --bg-streak: #dfd4c5;
-            --text: #2d241e; 
-            --primary: #8b5a2b; 
-            --nav-bg: #2b231d; 
-            --card-bg: rgba(255, 255, 255, 0.75);
-        }
-        body { 
-            font-family: system-ui, sans-serif; 
-            background: repeating-linear-gradient(90deg, var(--bg-base), var(--bg-base) 120px, var(--bg-streak) 121px, var(--bg-base) 122px, var(--bg-base) 240px);
-            color: var(--text); 
-            margin: 0; 
-            padding: 0; 
-        }
-        
-        nav { 
-            background: var(--nav-bg); 
-            padding: 1rem 2rem; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        nav a { color: #f4efe8; text-decoration: none; font-weight: 600; margin-left: 1.5rem; }
-        nav .brand { margin-left: 0; font-size: 1.25rem; color: #dcb88f; }
-        
-        .container { max-width: 800px; margin: 40px auto; padding: 0 2rem; }
-        h1 { color: #1a130e; margin-bottom: 2rem; text-align: center; }
-        h2 { color: #4a3e35; margin-top: 2.5rem; border-bottom: 2px solid #baab98; padding-bottom: 0.5rem; }
-        
-        ul { list-style: none; padding: 0; }
-        .project-card { 
-            background: var(--card-bg); 
-            margin: 16px 0; 
-            padding: 20px; 
-            border-radius: 10px; 
-            box-shadow: 0 6px 18px rgba(45,36,30,0.05); 
-            border: 1px solid rgba(255,255,255,0.5);
-            backdrop-filter: blur(2px);
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-        .project-info { display: flex; flex-direction: column; gap: 0.25rem; }
-        a.project-link { color: var(--primary); text-decoration: none; font-weight: bold; font-size: 1.2rem; }
-        a.project-link:hover { text-decoration: underline; }
-        .status { color: #6e5d4f; font-size: 0.9rem; font-style: italic; }
-        
-        .trackers { display: flex; gap: 0.5rem; align-items: center; }
-        .trackers img { display: block; height: 20px; }
-    </style>
+    <link rel="stylesheet" href="/assets/styles.css">
 </head>
 <body>
-    <nav>
+    <nav class="site-nav">
         <a href="/" class="brand">Jacque Fong</a>
-        <div>
-            <a href="/">Home</a>
-            <a href="/about.html">About Me</a>
-            <a href="/projects.html">Projects</a>
-            <a href="/resume.html">Resume</a>
-        </div>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/about.html">About Me</a></li>
+            <li><a href="/projects.html" aria-current="page">Projects</a></li>
+            <li><a href="/resume.html">Resume</a></li>
+        </ul>
     </nav>
-    
-    <div class="container">
-        <h1>Personal Projects Overview</h1>
-        
-        <h2>R Projects</h2>
-        <ul>
-            <li class="project-card">
-                <div class="project-info">
-                    <a class="project-link" href="/R-Projects/Federated-Lasso-regression/">Federated Lasso Regression</a>
-                    <span class="status">Decentralized statistical modeling simulation</span>
-                </div>
-                <div class="trackers">
-                    <img src="https://shields.io" alt="Last Commit Tracker">
-                    <img src="https://shields.io" alt="Activity Progress">
-                </div>
-            </li>
-        </ul>
 
-        <h2>Python Projects</h2>
-        <ul>
-            <li class="project-card">
-                <div class="project-info">
-                    <span class="project-link" style="color: #8c7b6e; font-weight: normal;">Core Pipeline Architecture</span>
-                    <span class="status">Planned backend processing modules</span>
-                </div>
-                <div class="trackers">
-                    <img src="https://shields.io" alt="Status Badge">
-                </div>
-            </li>
-        </ul>
+    <main class="container projects-page">
+        <h1>Projects</h1>
+        <p class="subtitle">Grouped by area, most recently updated first.</p>
+        <div id="project-sections">
+            <p class="loading">Loading projects…</p>
+        </div>
+    </main>
 
-        <h2>Computer Vision Projects</h2>
-        <ul>
-            <li class="project-card">
-                <div class="project-info">
-                    <span class="project-link" style="color: #8c7b6e; font-weight: normal;">Object Recognition System</span>
-                    <span class="status">Neural Network training tracking models</span>
-                </div>
-                <div class="trackers">
-                    <img src="https://shields.io" alt="Status Badge">
-                </div>
-            </li>
-        </ul>
-    </div>
+    <footer class="site-footer">© 2026 Jacque Fong</footer>
+
+    <script>
+
+    const CACHE_KEY = "project-dates-v1";
+    const CACHE_MINUTES = 30;
+    async function lastCommitDate(repo, path) {
+        const url = `https://api.github.com/repos/${repo}/commits?path=${encodeURIComponent(path)}&per_page=1`;
+        const res = await fetch(url);
+        if (!res.ok) return null;
+        const commits = await res.json();
+        return commits.length ? commits[0].commit.committer.date : null;
+    }
+
+    async function projectDate(repo, project) {
+        const paths = [project.path, ...(project.previousPaths || [])];
+        const dates = await Promise.all(paths.map(p => lastCommitDate(repo, p).catch(() => null)));
+        const valid = dates.filter(Boolean).sort();
+        return valid.length ? valid[valid.length - 1] : null;
+    }
+
+    function readCache() {
+        try {
+            const saved = JSON.parse(sessionStorage.getItem(CACHE_KEY));
+            if (saved && Date.now() - saved.time < CACHE_MINUTES * 60000) return saved.dates;
+        } catch (e) { /* storage unavailable: just fetch again */ }
+        return null;
+    }
+
+    function writeCache(dates) {
+        try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ time: Date.now(), dates })); }
+        catch (e) { /* ignore */ }
+    }
+
+    function timeAgo(iso) {
+        const days = Math.floor((Date.now() - new Date(iso)) / 86400000);
+        if (days < 1)  return "today";
+        if (days < 2)  return "yesterday";
+        if (days < 30) return `${days} days ago`;
+        const months = Math.floor(days / 30);
+        if (months < 12) return `${months} month${months > 1 ? "s" : ""} ago`;
+        const years = Math.floor(days / 365);
+        return `${years} year${years > 1 ? "s" : ""} ago`;
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function projectCard(project, date) {
+        const updated = date
+            ? `<time datetime="${date}" title="${new Date(date).toLocaleString()}">Updated ${timeAgo(date)}</time>`
+            : "";
+        const tags = (project.tags || []).map(t => `<span class="tag">${escapeHtml(t)}</span>`).join("");
+        return `
+            <li>
+                <a class="card project-card" href="/project.html?id=${encodeURIComponent(project.id)}">
+                    <div class="project-head">
+                        <h3>${escapeHtml(project.name)}</h3>
+                        ${updated}
+                    </div>
+                    <p>${escapeHtml(project.description)}</p>
+                    <div class="tags">${tags}</div>
+                </a>
+            </li>`;
+    }
+
+    async function buildPage() {
+        const container = document.getElementById("project-sections");
+        try {
+            const config = await (await fetch("/assets/projects.json")).json();
+
+            let dates = readCache();
+            if (!dates) {
+                dates = {};
+                await Promise.all(config.projects.map(async p => {
+                    dates[p.id] = await projectDate(config.repo, p);
+                }));
+                if (Object.values(dates).some(Boolean)) writeCache(dates);
+            }
+
+            container.innerHTML = config.sections.map(section => {
+                const items = config.projects
+                    .filter(p => p.section === section.id)
+                    .sort((a, b) => (dates[b.id] || "").localeCompare(dates[a.id] || ""));
+
+                const body = items.length
+                    ? `<ul class="project-list">${items.map(p => projectCard(p, dates[p.id])).join("")}</ul>`
+                    : `<p class="coming-soon">Coming soon.</p>`;
+
+                return `<section class="project-section"><h2>${escapeHtml(section.title)}</h2>${body}</section>`;
+            }).join("");
+        } catch (err) {
+            container.innerHTML = `<p class="coming-soon">Projects couldn't load right now. You can browse them on
+                <a href="https://github.com/FongJacque/Personal-Projects" target="_blank" rel="noopener">GitHub</a>.</p>`;
+        }
+    }
+
+    buildPage();
+    </script>
 </body>
-
 </html>
