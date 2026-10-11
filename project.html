@@ -170,6 +170,14 @@
         const plots   = document.getElementById("demo-plots");
         let run = 0, startTime = 0, timer = null, phase = "";
 
+        // ----- Optional: the visitor's own text -----
+        const tx = project.demo.text;
+        const textarea = tx ? document.getElementById("demo-textarea") : null;
+        if (tx) {
+            if (tx.example) document.getElementById("text-example").addEventListener("click", () => { textarea.value = tx.example; textarea.focus(); });
+            document.getElementById("text-clear").addEventListener("click", () => { textarea.value = ""; textarea.focus(); });
+        }
+
         // ----- Optional: the visitor's own file -----
         const up = project.demo.upload;
         let chosenFile = null;
@@ -244,12 +252,19 @@
             tick();
 
             // The visitor's file goes in as user_input/<their file name> and is passed to the script as its argument
-            let extra = {};
+            let extra = { files: {}, args: [] };
             if (chosenFile) {
                 // Keep the visitor's file name (minus unusual characters) so messages mention it
                 const safeName = chosenFile.name.replace(/[^A-Za-z0-9._-]+/g, "_").replace(/^[._]+/, "") || "upload";
                 const path = `user_input/${safeName}`;
-                extra = { files: { [path]: await chosenFile.arrayBuffer() }, args: [path] };
+                extra.files[path] = await chosenFile.arrayBuffer();
+                extra.args.push(path);
+            }
+            // The visitor's text goes in as user_input/<fileName> and is passed as the next argument
+            if (textarea && textarea.value.trim()) {
+                const path = `user_input/${(tx.fileName || "input.txt").replace(/[^A-Za-z0-9._-]+/g, "_")}`;
+                extra.files[path] = new TextEncoder().encode(textarea.value).buffer;
+                extra.args.push(path);
             }
 
             const ok = await runDemo(repo, project, {
@@ -307,6 +322,18 @@
                         Python and never uploaded anywhere.</p>
                     <p id="upload-error" class="upload-error" role="alert" hidden></p>
                 </div>` : "";
+        const tx = project.demo && project.demo.text;
+        const textBlock = tx ? `
+                <div class="demo-text">
+                    <label for="demo-textarea" class="demo-text-label">${escapeHtml(tx.label || "Your input (optional)")}</label>
+                    <textarea id="demo-textarea" rows="${Number(tx.rows) || 5}" maxlength="${Number(tx.maxLength) || 4000}"
+                        placeholder="${escapeHtml(tx.placeholder || "")}" spellcheck="true"></textarea>
+                    <div class="demo-text-actions">
+                        ${tx.example ? `<button id="text-example" class="link-btn" type="button">Fill in an example</button>` : ""}
+                        <button id="text-clear" class="link-btn" type="button">Clear</button>
+                    </div>
+                    <p class="upload-note">${escapeHtml(tx.hint || "")} Leave it empty to use the default. What you type stays in your browser.</p>
+                </div>` : "";
         const demoSection = project.demo ? `
             <section class="card project-block">
                 <h2>Run it</h2>
@@ -314,6 +341,7 @@
                     right here in your browser using ${lang} for the web. Nothing is installed or saved, and refreshing the page clears it.
                     The first run downloads ${lang} into your browser, so it takes ${escapeHtml(project.demo.runtime || "a little longer")}.</p>
                 ${uploadBlock}
+                ${textBlock}
                 <div class="demo-controls">
                     <button id="run-btn" class="btn" type="button"><i class="fa-solid fa-play" aria-hidden="true"></i> Run demo</button>
                     <button id="stop-btn" class="btn btn-outline" type="button" hidden><i class="fa-solid fa-stop" aria-hidden="true"></i> Stop</button>

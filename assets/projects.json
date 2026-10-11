@@ -80,14 +80,23 @@
       "name": "Bingo Card Generator",
       "section": "python",
       "path": "Python-Projects/Bingo-Card-Generator",
-      "description": "Builds a random 5 × 5 bingo card from numbers or your own word list and draws it as an image.",
+      "description": "Builds a random 5 × 5 bingo card from numbers or your own list of words and draws it as an image.",
       "tags": [
         "Python",
         "Pillow"
       ],
       "demo": {
         "entry": "bingo_card.py",
-        "runtime": "a few seconds once Python has loaded"
+        "runtime": "a few seconds once Python has loaded",
+        "text": {
+          "label": "Your own words (optional)",
+          "fileName": "words.txt",
+          "rows": 5,
+          "maxLength": 4000,
+          "placeholder": "At least 25 words or short phrases, one per line or separated by commas",
+          "hint": "Enter at least 25 different words or short phrases; if you give more, 25 are picked at random.",
+          "example": "Someone says \"synergy\", Coffee spill, Laptop dies mid-demo, Dog barks on call, \"Can you hear me now?\", Wrong slide deck, Frozen video, Echo on the line, Background noise, \"Let's take this offline\", Late arrival, Mute button fail, Kid walks in, Internet drops, \"You're on mute\", Screen share fails, Calendar double-booked, Meeting runs over, Pet on keyboard, Doorbell rings, Forgot to unmute, Typing loudly, Bad lighting, Someone eating, Camera off all meeting, Awkward silence"
+        }
       }
     }
   ]

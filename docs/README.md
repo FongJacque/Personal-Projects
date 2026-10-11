@@ -53,6 +53,7 @@ Add it inside the `"projects": [ ... ]` list, with a comma between entries.
 | `packages` | no | Extra packages the auto-detection misses (rare) |
 | `language` | no | `"python"` or `"r"`, only if the entry's extension doesn't say |
 | `upload` | no | Lets visitors run the demo on their own file (Python demos). See below |
+| `text` | no | Gives visitors a text box whose contents are passed to the demo (Python demos). See below |
 
 ### Letting visitors use their own file
 
@@ -81,7 +82,26 @@ path = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).parent / "imag
 }
 ```
 
-To report a problem with the visitor's file, call `sys.exit("A short, plain message")`:
+### Letting visitors type their own input
+
+A `text` block adds a text box. What the visitor types is saved in memory as
+`user_input/<fileName>` and passed to the script as an argument, like
+`python main.py words.txt`. An empty box passes nothing, so the script uses its
+default. If a demo has both `upload` and `text`, the file comes first, then the text.
+
+```json
+"text": {
+  "label": "Your own words (optional)",
+  "fileName": "words.txt",
+  "placeholder": "Shown in the empty box",
+  "hint": "One sentence on what to enter.",
+  "example": "Optional sample input for a Fill in an example link",
+  "rows": 5,
+  "maxLength": 4000
+}
+```
+
+To report a problem with the visitor's input, call `sys.exit("A short, plain message")`:
 the page shows that message on its own, without a traceback.
 
 Packages are detected automatically:

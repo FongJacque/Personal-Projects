@@ -653,6 +653,24 @@ button.btn:disabled { opacity: 0.6; cursor: wait; transform: none; }
 .upload-note { margin: 0.6rem 0 0; font-size: 0.88rem; color: var(--text-muted); }
 .upload-error { margin: 0.6rem 0 0; font-size: 0.92rem; color: #a3341f; font-weight: 600; }
 
+/* Optional "type your own input" box on demos */
+.demo-text { margin: 1.25rem 0 0.25rem; }
+.demo-text-label { display: block; font-weight: 700; margin-bottom: 0.4rem; }
+.demo-text textarea {
+    width: 100%;
+    font: inherit;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    padding: 0.7rem 0.85rem;
+    border: 1px solid #d8ccbb;
+    border-radius: 8px;
+    background: #fff;
+    color: var(--text);
+    resize: vertical;
+}
+.demo-text textarea:focus { outline: 3px solid var(--nav-accent); outline-offset: 1px; border-color: var(--primary); }
+.demo-text-actions { display: flex; gap: 1.25rem; margin-top: 0.4rem; }
+
 /* ---------- Resume page (resume.html) ---------- */
 .resume-page { text-align: center; }
 .resume-page h1 { margin-bottom: 0.5rem; }
