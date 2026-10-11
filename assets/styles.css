@@ -346,8 +346,8 @@ button.btn:disabled { opacity: 0.6; cursor: wait; transform: none; }
     margin: 0;
 }
 .demo-output .stderr { color: #f2a68a; }
-.demo-plots { display: grid; gap: 1rem; margin-top: 1rem; }
-.demo-plots img { width: 100%; background: #fff; border-radius: 8px; box-shadow: var(--shadow); }
+.demo-plots { display: grid; justify-items: center; gap: 1rem; margin-top: 1rem; }
+.demo-plots img { max-width: 100%; background: #fff; border-radius: 8px; box-shadow: var(--shadow); }   /* natural size, never wider than the card */
 
 /* ---------- Resume page (resume.html) ---------- */
 .resume-page { text-align: center; }

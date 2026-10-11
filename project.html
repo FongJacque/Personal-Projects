@@ -28,11 +28,13 @@
 
     <footer class="site-footer">© 2026 Jacque Fong</footer>
 
-    <script>
+    <script type="module">
+    import { runDemo, stopDemo, demoLanguage } from "/assets/demo-runner.js";
+
     // ------------------------------------------------------------------
     // One template for every project: project.html?id=<project id>.
     // Details come from /assets/projects.json; activity comes from
-    // GitHub's public API; the demo runs in /assets/demo-worker.js.
+    // GitHub's public API; demos run through /assets/demo-runner.js.
     // ------------------------------------------------------------------
 
     const params = new URLSearchParams(location.search);
@@ -156,13 +158,16 @@
 
     // ---------- Demo: run the project's code in the browser ----------
 
-    function setupDemo(project) {
+    function setupDemo(repo, project) {
         const runBtn  = document.getElementById("run-btn");
         const stopBtn = document.getElementById("stop-btn");
         const status  = document.getElementById("demo-status");
         const output  = document.getElementById("demo-output");
         const plots   = document.getElementById("demo-plots");
-        let worker = null, startTime = 0, timer = null;
+        let run = 0, startTime = 0, timer = null, phase = "";
+
+        const seconds = () => Math.round((Date.now() - startTime) / 1000);
+        const tick = () => status.textContent = `${phase} (${seconds()}s)`;
 
         function print(text, cls) {
             const line = document.createElement("span");
@@ -180,39 +185,36 @@
             stopBtn.hidden = true;
         }
 
-        runBtn.addEventListener("click", () => {
+        runBtn.addEventListener("click", async () => {
+            const thisRun = ++run;
+            const live = fn => (...args) => { if (thisRun === run) fn(...args); };   // ignore leftovers from a stopped run
             output.textContent = "";
             plots.innerHTML = "";
             output.hidden = false;
             runBtn.disabled = true;
             stopBtn.hidden = false;
             startTime = Date.now();
-            let phase = "Starting…";
-            const tick = () => status.textContent = `${phase} (${Math.round((Date.now() - startTime) / 1000)}s)`;
+            phase = "Starting…";
             timer = setInterval(tick, 1000);
             tick();
 
-            if (!worker) worker = new Worker("/assets/demo-worker.js");
-            worker.onmessage = ({ data: msg }) => {
-                if (msg.type === "status") { phase = msg.data; tick(); }
-                else if (msg.type === "stdout") print(msg.data);
-                else if (msg.type === "stderr") print(msg.data, "stderr");
-                else if (msg.type === "image") {
+            const ok = await runDemo(repo, project, {
+                status: live(text => { phase = text; tick(); }),
+                stdout: live(text => print(text)),
+                stderr: live(text => print(text, "stderr")),
+                image:  live(src => {
                     const img = document.createElement("img");
-                    img.src = "data:image/png;base64," + msg.data;
-                    img.alt = "Plot produced by the demo";
+                    img.src = src;
+                    img.alt = "Image produced by the demo";
                     plots.appendChild(img);
-                }
-                else if (msg.type === "done")  finish(`Finished in ${Math.round((Date.now() - startTime) / 1000)}s.`);
-                else if (msg.type === "error") { print(msg.data, "stderr"); finish("Stopped with an error."); }
-            };
-            worker.onerror = (e) => { print(e.message || "The demo crashed.", "stderr"); finish("Stopped with an error."); };
-            worker.postMessage({ basePath: project.path, demo: project.demo });
+                }),
+            });
+            if (thisRun === run) finish(ok ? `Finished in ${seconds()}s.` : "Stopped with an error.");
         });
 
         stopBtn.addEventListener("click", () => {
-            worker.terminate();      // kills Python immediately; a new one starts on the next run
-            worker = null;
+            run++;
+            stopDemo();
             print("Stopped.", "stderr");
             finish("Stopped.");
         });
@@ -235,12 +237,13 @@
         const sourceUrl = `https://github.com/${config.repo}/tree/main/${project.path}`;
         const tags = (project.tags || []).map(t => `<span class="tag">${escapeHtml(t)}</span>`).join("");
 
+        const lang = project.demo && demoLanguage(project.demo) === "r" ? "R" : "Python";
         const demoSection = project.demo ? `
             <section class="card project-block">
                 <h2>Run it</h2>
                 <p class="demo-note">This runs the project's actual code (<code>${escapeHtml(project.demo.entry)}</code>)
-                    right here in your browser using Python for the web. Nothing is installed or saved, and refreshing the page clears it.
-                    The first run downloads Python (about 30&nbsp;MB) and takes ${escapeHtml(project.demo.runtime || "a moment")}.</p>
+                    right here in your browser using ${lang} for the web. Nothing is installed or saved, and refreshing the page clears it.
+                    The first run downloads ${lang} into your browser, so it takes ${escapeHtml(project.demo.runtime || "a little longer")}.</p>
                 <div class="demo-controls">
                     <button id="run-btn" class="btn" type="button"><i class="fa-solid fa-play" aria-hidden="true"></i> Run demo</button>
                     <button id="stop-btn" class="btn btn-outline" type="button" hidden><i class="fa-solid fa-stop" aria-hidden="true"></i> Stop</button>
@@ -267,7 +270,7 @@
             ${demoSection}`;
 
         renderActivity(config.repo, project);
-        if (project.demo) setupDemo(project);
+        if (project.demo) setupDemo(config.repo, project);
     }
 
     buildPage();
