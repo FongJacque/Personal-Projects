@@ -536,6 +536,12 @@ img { max-width: 100%; height: auto; }
 .about-cta p { color: #4a3e35; }
 .cta-row { display: flex; justify-content: center; flex-wrap: wrap; gap: 1rem; margin-top: 1.25rem; }
 
+/* ---------- Page not found (404.html) ---------- */
+.not-found { flex: 0 0 auto; max-width: 620px; margin: 5rem auto auto; text-align: center; }   /* sized to its content, footer stays at the bottom */
+.not-found-emblem { width: 96px; margin-bottom: 0.5rem; }
+.not-found h1 { margin: 0 0 0.75rem; }
+.not-found p { margin: 0; color: #4a3e35; font-size: 1.1rem; }
+
 /* ---------- Single project page (project.html) ---------- */
 .back-link { display: inline-block; margin-bottom: 1rem; font-weight: 600; text-decoration: none; }
 

@@ -5,7 +5,8 @@
 # =============================================================================
 
 import sys, os
-sys.path.insert(0, "/home/claude")
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)          # so the module files next to this one can be imported
 
 import numpy as np
 import matplotlib
@@ -21,7 +22,7 @@ from synchronous_global_loop  import run_federated, TOLERANCE
 from pooled_baseline          import fit_pooled_baseline, pool_node
 
 np.random.seed(42)
-OUT = "/mnt/user-data/outputs/"
+OUT = os.path.join(HERE, "outputs") + os.sep   # plots are saved to outputs/ next to this file
 os.makedirs(OUT, exist_ok=True)
 
 # ── 1. Tune local λ_j ──────────────────────────────────────────────────────
@@ -106,7 +107,7 @@ plt.tight_layout()
 plt.savefig(OUT + "confusion_heatmaps.png", dpi=150, bbox_inches="tight")
 plt.close()
 
-print("\nSaved plots to outputs/")
+print(f"\nSaved plots to {OUT}")
 
 # ── 6. Final summary ───────────────────────────────────────────────────────
 print("\n" + "="*60)

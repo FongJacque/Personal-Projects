@@ -52,6 +52,25 @@ pip install numpy pandas matplotlib
 python final_project.py
 ```
 
+`final_project.py` is the whole pipeline in one file. The same pipeline is
+also split into modules, one per stage:
+
+| File | Stage |
+|---|---|
+| `data_loading.py` | Loads each node's data (generates synthetic data if `data/` is empty) |
+| `core_optimization_operators.py` | Soft-thresholding and coordinate-descent epochs |
+| `hyperparameter_protocol.py` | Per-node lambda tuning |
+| `synchronous_global_loop.py` | Federated rounds and weighted aggregation |
+| `pooled_baseline.py` | Centralized baseline for comparison |
+
+To run the modular version, which saves its plots to `outputs/`:
+
+```bash
+python run_project.py
+```
+
+Both produce the same results.
+
 ## What I'd improve with more time
 
 - Add asynchronous aggregation (nodes update on their own schedule
