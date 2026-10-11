@@ -530,6 +530,10 @@ img { max-width: 100%; height: auto; }
 .timeline .when { font-size: 0.85rem; font-weight: 700; color: var(--primary); }
 .timeline h3 { margin: 0.2rem 0 0.3rem; font-size: 1.1rem; }
 .timeline p { margin: 0; color: #4a3e35; }
+.timeline p + p { margin-top: 0.6rem; }
+
+.about-prose p { color: #3d3128; font-size: 1.05rem; margin: 1rem 0 0; max-width: 70ch; }
+.about-cta p + p { margin-top: -0.25rem; }
 
 .about-cta { margin-top: 2.5rem; text-align: center; }
 .about-cta h2 { margin-top: 0; }
