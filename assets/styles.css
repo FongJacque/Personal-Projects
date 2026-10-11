@@ -129,6 +129,7 @@ img { max-width: 100%; height: auto; }
     .container { margin: 1.5rem auto; padding: 0 1rem; }
     .card { padding: 1.5rem; }
 }
+
 .hero-container {
     display: flex;
     justify-content: center;
@@ -183,6 +184,55 @@ img { max-width: 100%; height: auto; }
     .hero-photo { width: 180px; height: 180px; }
     .hero p { font-size: 1.1rem; }
 }
+
+.projects-page h1 { text-align: center; margin-bottom: 0.5rem; }
+.projects-page .subtitle { text-align: center; color: var(--text-muted); margin: 0 0 1.5rem; }
+
+.project-section h2 {
+    margin-top: 2.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--rule);
+    color: #4a3e35;
+}
+
+.project-list { list-style: none; padding: 0; margin: 0; }
+.project-list li { margin: 1rem 0; }
+
+.project-card {
+    display: block;
+    padding: 1.25rem 1.5rem;
+    color: var(--text);
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.project-card:hover {
+    color: var(--text);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(45, 36, 30, 0.14);
+}
+
+.project-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+}
+.project-head h3 { margin: 0; font-size: 1.2rem; color: var(--primary); }
+.project-head time { font-size: 0.85rem; color: var(--text-muted); white-space: nowrap; }
+.project-card p { margin: 0.5rem 0 0.75rem; color: #4a3e35; }
+
+.tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.tag {
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    background: rgba(139, 90, 43, 0.12);
+    color: var(--primary-hover);
+}
+
+.coming-soon, .loading { color: var(--text-muted); font-style: italic; }
 
 .resume-page { text-align: center; }
 .resume-page h1 { margin-bottom: 0.5rem; }
