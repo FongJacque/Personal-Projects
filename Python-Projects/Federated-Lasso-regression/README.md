@@ -57,19 +57,22 @@ also split into modules, one per stage:
 
 | File | Stage |
 |---|---|
-| `data_loading.py` | Loads each node's data (generates synthetic data if `data/` is empty) |
+| `data_loading.py` | Loads each node's data (temporary example data if `data/` is empty) |
 | `core_optimization_operators.py` | Soft-thresholding and coordinate-descent epochs |
 | `hyperparameter_protocol.py` | Per-node lambda tuning |
 | `synchronous_global_loop.py` | Federated rounds and weighted aggregation |
 | `pooled_baseline.py` | Centralized baseline for comparison |
 
-To run the modular version, which saves its plots to `outputs/`:
+To run the modular version:
 
 ```bash
 python run_project.py
 ```
 
-Both produce the same results.
+Both produce the same results. Plots open in a window rather than being saved,
+and the example data is generated into a temporary folder that's deleted once
+it's loaded, so a run leaves no files behind. To keep a copy of the data, run
+`python generate_synthetic_data.py`, which writes it to `data/`.
 
 ## What I'd improve with more time
 

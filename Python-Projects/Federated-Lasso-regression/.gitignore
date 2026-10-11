@@ -7,9 +7,6 @@ data/node*_y_val.csv
 # But DO keep the true beta used for synthetic recovery checks
 !data/beta_true.npy
 
-# Plots written by run_project.py
-outputs/
-
 # Standard Python housekeeping
 __pycache__/
 *.pyc

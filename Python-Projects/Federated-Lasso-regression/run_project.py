@@ -9,8 +9,6 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)          # so the module files next to this one can be imported
 
 import numpy as np
-import matplotlib
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from itertools import product as iproduct
 
@@ -22,8 +20,6 @@ from synchronous_global_loop  import run_federated, TOLERANCE
 from pooled_baseline          import fit_pooled_baseline, pool_node
 
 np.random.seed(42)
-OUT = os.path.join(HERE, "outputs") + os.sep   # plots are saved to outputs/ next to this file
-os.makedirs(OUT, exist_ok=True)
 
 # ── 1. Tune local λ_j ──────────────────────────────────────────────────────
 print("Tuning local λ_j ...")
@@ -84,8 +80,7 @@ ax.set_ylabel("Weighted Training Loss", fontsize=12)
 ax.set_title("Global Training Loss Trajectory  (E = 1, 5, 10)", fontsize=13)
 ax.legend(fontsize=11); ax.grid(True, alpha=0.3)
 plt.tight_layout()
-plt.savefig(OUT + "loss_trajectory.png", dpi=150, bbox_inches="tight")
-plt.close()
+plt.show()    # displayed, not saved
 
 # Confusion-matrix heatmaps
 fig2, axes2 = plt.subplots(1, 3, figsize=(13, 4))
@@ -104,10 +99,8 @@ for idx, E in enumerate([1, 5, 10]):
     plt.colorbar(im, ax=ax, shrink=0.7)
 fig2.suptitle("Confusion Matrices: Federated vs. Pooled Lasso (Ground Truth)", fontsize=13)
 plt.tight_layout()
-plt.savefig(OUT + "confusion_heatmaps.png", dpi=150, bbox_inches="tight")
-plt.close()
+plt.show()    # displayed, not saved
 
-print(f"\nSaved plots to {OUT}")
 
 # ── 6. Final summary ───────────────────────────────────────────────────────
 print("\n" + "="*60)
@@ -117,7 +110,7 @@ print(f"\n1. Optimal local regularization parameters:")
 for l in ["A","B","C"]:
     print(f"   λ_{l} = {lambda_j[l]:.6f}  (Node {l}, m={nodes[l]['m']}, w={WEIGHTS[l]:.2f})")
 print(f"   λ_pool = {lambda_pool:.6f}")
-print(f"\n2. Loss trajectories: see loss_trajectory.png")
+print(f"\n2. Loss trajectories: see the plot above")
 for E in [1, 5, 10]:
     s = summary[E]
     print(f"\nE={E}: rounds={s['rounds']}, final_loss={s['final_loss']:.6f}, "

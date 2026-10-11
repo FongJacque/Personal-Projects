@@ -70,26 +70,28 @@ def make_node_data(m_train, m_val, beta_true, p=P, noise_std=NOISE_STD, rng=None
     return X_train, y_train, X_val, y_val
 
 
-def main():
+def main(output_dir=OUTPUT_DIR):
+    """Write the synthetic data to output_dir (data/ next to this file by default)."""
+    output_dir = Path(output_dir)
     rng = np.random.default_rng(SEED)
-    OUTPUT_DIR.mkdir(exist_ok=True)
+    output_dir.mkdir(exist_ok=True)
 
     beta_true = make_true_beta(rng=rng)
-    np.save(OUTPUT_DIR / "beta_true.npy", beta_true)  # kept for optional recovery-accuracy checks
+    np.save(output_dir / "beta_true.npy", beta_true)  # kept for optional recovery-accuracy checks
 
     for node_id, (m_train, m_val) in NODE_SIZES.items():
         X_train, y_train, X_val, y_val = make_node_data(
             m_train, m_val, beta_true, rng=rng
         )
 
-        pd.DataFrame(X_train).to_csv(OUTPUT_DIR / f"node{node_id}_X_train.csv", index=False)
-        pd.DataFrame(y_train, columns=["0"]).to_csv(OUTPUT_DIR / f"node{node_id}_y_train.csv", index=False)
-        pd.DataFrame(X_val).to_csv(OUTPUT_DIR / f"node{node_id}_X_val.csv", index=False)
-        pd.DataFrame(y_val, columns=["0"]).to_csv(OUTPUT_DIR / f"node{node_id}_y_val.csv", index=False)
+        pd.DataFrame(X_train).to_csv(output_dir / f"node{node_id}_X_train.csv", index=False)
+        pd.DataFrame(y_train, columns=["0"]).to_csv(output_dir / f"node{node_id}_y_train.csv", index=False)
+        pd.DataFrame(X_val).to_csv(output_dir / f"node{node_id}_X_val.csv", index=False)
+        pd.DataFrame(y_val, columns=["0"]).to_csv(output_dir / f"node{node_id}_y_val.csv", index=False)
 
         print(f"Node {node_id}: wrote {m_train} train / {m_val} val rows (p={P})")
 
-    print(f"\nDone. Synthetic data written to {OUTPUT_DIR}/")
+    print(f"\nDone. Synthetic data written to {output_dir}/")
     print(f"{N_ACTIVE} of {P} coefficients are truly non-zero (see beta_true.npy).")
 
 

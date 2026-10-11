@@ -11,15 +11,18 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 
-# Data lives in a data/ folder next to this file. The repo ships a synthetic
-# data generator instead of the original coursework data; if data/ is empty,
-# generate it automatically.
+# Uses data/ next to this file if it holds data. Otherwise it generates the
+# synthetic example data into a temporary folder, which is deleted as soon as
+# the data is loaded, so running the example leaves no files behind.
 DATA_DIR = Path(__file__).parent / "data"
+TEMP_DATA = not (DATA_DIR / "node1_X_train.csv").exists()
 
-if not (DATA_DIR / "node1_X_train.csv").exists():
-    print("No data found — generating synthetic data (see generate_synthetic_data.py)...")
+if TEMP_DATA:
+    import tempfile
     import generate_synthetic_data
-    generate_synthetic_data.main()
+    DATA_DIR = Path(tempfile.mkdtemp(prefix="federated_lasso_"))
+    print("No data/ folder found — generating temporary example data (see generate_synthetic_data.py)...")
+    generate_synthetic_data.main(DATA_DIR)
 
 def load_node_data(node_id):
     """Load train and validation arrays for a given node file index (1,2,3)."""
@@ -32,6 +35,10 @@ def load_node_data(node_id):
             "m":       X_train.shape[0]}
 
 raw_data = {j: load_node_data(j) for j in [1, 2, 3]}
+
+if TEMP_DATA:
+    import shutil
+    shutil.rmtree(DATA_DIR, ignore_errors=True)   # everything is in memory now
 
 # Sort by descending training size → A=400, B=240, C=160
 sorted_keys = sorted(raw_data, key=lambda j: raw_data[j]["m"], reverse=True)
