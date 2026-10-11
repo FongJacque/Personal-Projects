@@ -1,0 +1,19 @@
+{
+  "repo": "FongJacque/Personal-Projects",
+  "sections": [
+    { "id": "r",      "title": "R Projects" },
+    { "id": "python", "title": "Python Projects" },
+    { "id": "cv",     "title": "Computer Vision Projects" }
+  ],
+  "projects": [
+    {
+      "id": "federated-lasso",
+      "name": "Federated Lasso Regression",
+      "section": "python",
+      "path": "Python-Projects/Federated-Lasso-regression",
+      "previousPaths": ["R-Projects/Federated-Lasso-regression"],
+      "description": "Three simulated data nodes train one shared sparse model without ever sharing raw data, compared against a centralized baseline.",
+      "tags": ["Python", "NumPy", "pandas", "Federated learning"]
+    }
+  ]
+}
