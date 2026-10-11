@@ -52,6 +52,37 @@ Add it inside the `"projects": [ ... ]` list, with a comma between entries.
 | `files` | no | Only needed to limit which files load. By default every file in the folder is loaded |
 | `packages` | no | Extra packages the auto-detection misses (rare) |
 | `language` | no | `"python"` or `"r"`, only if the entry's extension doesn't say |
+| `upload` | no | Lets visitors run the demo on their own file (Python demos). See below |
+
+### Letting visitors use their own file
+
+Add an `upload` block to the demo and the project page shows a button for
+picking a file. The file never leaves the visitor's device: it's placed in
+the in-browser Python's memory as `user_input/<their file name>` and passed
+to the script as its first argument, exactly like running
+`python main.py their_file.jpg`. When no file is chosen, the script runs
+with no argument, so read it like this and fall back to your sample:
+
+```python
+import sys
+from pathlib import Path
+path = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).parent / "images" / "sample.jpg"
+```
+
+```json
+"demo": {
+  "entry": "demo.py",
+  "upload": {
+    "label": "Use your own photo",
+    "accept": ".jpg,.jpeg,.png",
+    "maxMB": 20,
+    "hint": "One sentence on what kinds of files work."
+  }
+}
+```
+
+To report a problem with the visitor's file, call `sys.exit("A short, plain message")`:
+the page shows that message on its own, without a traceback.
 
 Packages are detected automatically:
 - **Python:** from the `import` lines of the entry file and the local files it imports. NumPy, pandas, matplotlib,

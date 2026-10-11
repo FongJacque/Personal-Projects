@@ -96,8 +96,16 @@ _script_dir = os.path.dirname(os.path.join("/project", ENTRY))
 for _p in ("/project", _script_dir):
     if _p not in sys.path:
         sys.path.insert(0, _p)
+sys.argv = [ENTRY] + list(ARGS)   # e.g. ["demo.py", "user_input/upload.jpg"]
+EXIT_MESSAGE = None
 try:
     runpy.run_path("/project/" + ENTRY, run_name="__main__")
+except SystemExit as _exit:
+    # sys.exit("message") is how a script reports a problem to its user; sys.exit() / sys.exit(0) is success
+    if isinstance(_exit.code, str):
+        EXIT_MESSAGE = _exit.code
+    elif _exit.code not in (None, 0):
+        EXIT_MESSAGE = f"The script stopped with exit code {_exit.code}."
 finally:
     if plt is not None:
         plt.show()     # any figures the script made but never showed
@@ -127,7 +135,7 @@ function toBase64(bytes) {
 
 onmessage = async (event) => {
     // files: { "relative/path.ext": ArrayBuffer }, fetched by the page
-    const { entry, files, packages } = event.data;
+    const { entry, files, args, packages } = event.data;
     try {
         if (!pyodide) await startPython();
 
@@ -210,8 +218,11 @@ sorted(set(EXTRA) | {n for n in IMPORTS if importlib.util.find_spec(n) is None})
 
         send("status", `Running ${entry}…`);
         await pyodide.runPythonAsync(SETUP);
+        pyodide.globals.set("ARGS", pyodide.toPy(args || []));
+        let exitMessage = null;
         try {
             await pyodide.runPythonAsync(RUN);
+            exitMessage = pyodide.globals.get("EXIT_MESSAGE");
         } finally {
             pyodide.globals.set("ORIGINAL", pyodide.toPy(Object.keys(files)));
             pyodide.globals.set("IMAGE_EXT", pyodide.toPy(Object.keys(IMAGE_TYPES)));
@@ -220,7 +231,8 @@ sorted(set(EXTRA) | {n for n in IMPORTS if importlib.util.find_spec(n) is None})
                 send("image", { mime: IMAGE_TYPES[ext], base64: toBase64(pyodide.FS.readFile(path)) });
             }
         }
-        send("done");
+        if (exitMessage) send("error", exitMessage);   // shown as-is, no traceback
+        else send("done");
     } catch (err) {
         send("error", String(err.message || err));
     }

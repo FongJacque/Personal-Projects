@@ -24,6 +24,7 @@ pip install numpy matplotlib pillow scipy
 |---|---|
 | `python app.py` | Opens a small window. Click **Upload Image & Segment**, pick a `.jpg`, `.png` or `.bmp`, and the four-panel result appears. |
 | `python demo.py` | Runs all three methods on the sample photo in `images/` and shows the result. No file picker needed. |
+| `python demo.py my_photo.jpg` | Same, on your own image. On the website, **Use your own photo** does this in your browser. |
 
 `segmentation.py` holds the algorithms; `app.py` and `demo.py` only load an
 image and call them.

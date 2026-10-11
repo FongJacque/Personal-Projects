@@ -636,6 +636,23 @@ button.btn:disabled { opacity: 0.6; cursor: wait; transform: none; }
 .demo-plots { display: grid; justify-items: center; gap: 1rem; margin-top: 1rem; }
 .demo-plots img { max-width: 100%; background: #fff; border-radius: 8px; box-shadow: var(--shadow); }   /* natural size, never wider than the card */
 
+/* Optional "use your own file" control on demos */
+.demo-upload { margin: 1.25rem 0 0.25rem; }
+.demo-upload input[type="file"] {            /* hidden but still reachable by keyboard and screen readers */
+    position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden;
+}
+.demo-upload input[type="file"]:focus-visible + .upload-btn { outline: 3px solid var(--nav-accent); outline-offset: 3px; }
+.upload-btn { cursor: pointer; padding: 0.65rem 1.3rem; }
+.upload-chosen { display: flex; align-items: center; flex-wrap: wrap; gap: 0.6rem 0.9rem; margin-top: 0.9rem; }
+.upload-chosen img { width: 64px; height: 64px; object-fit: cover; border-radius: 6px; box-shadow: var(--shadow); }
+.upload-chosen span { font-weight: 600; word-break: break-all; }
+.link-btn {
+    font: inherit; font-size: 0.9rem; color: var(--primary); background: none; border: none;
+    padding: 0; text-decoration: underline; cursor: pointer;
+}
+.upload-note { margin: 0.6rem 0 0; font-size: 0.88rem; color: var(--text-muted); }
+.upload-error { margin: 0.6rem 0 0; font-size: 0.92rem; color: #a3341f; font-weight: 600; }
+
 /* ---------- Resume page (resume.html) ---------- */
 .resume-page { text-align: center; }
 .resume-page h1 { margin-bottom: 0.5rem; }

@@ -170,6 +170,47 @@
         const plots   = document.getElementById("demo-plots");
         let run = 0, startTime = 0, timer = null, phase = "";
 
+        // ----- Optional: the visitor's own file -----
+        const up = project.demo.upload;
+        let chosenFile = null;
+        if (up) {
+            const input   = document.getElementById("demo-file");
+            const chosen  = document.getElementById("upload-chosen");
+            const thumb   = document.getElementById("upload-thumb");
+            const nameEl  = document.getElementById("upload-name");
+            const errorEl = document.getElementById("upload-error");
+            const allowed = (up.accept || "").split(",").map(x => x.trim().toLowerCase()).filter(Boolean);
+            const maxBytes = (up.maxMB || 20) * 1024 * 1024;
+
+            const clear = () => {
+                chosenFile = null;
+                input.value = "";
+                chosen.hidden = true;
+                if (thumb.src) URL.revokeObjectURL(thumb.src);
+                thumb.removeAttribute("src");
+            };
+            input.addEventListener("change", () => {
+                const file = input.files[0];
+                errorEl.hidden = true;
+                if (!file) return;
+                const ext = "." + (file.name.split(".").pop() || "").toLowerCase();
+                if (allowed.length && !allowed.includes(ext)) {
+                    errorEl.textContent = `${file.name} isn't a supported file type. Choose ${allowed.join(", ")}.`;
+                    errorEl.hidden = false; clear(); return;
+                }
+                if (file.size > maxBytes) {
+                    errorEl.textContent = `${file.name} is larger than ${up.maxMB || 20} MB. Choose a smaller file.`;
+                    errorEl.hidden = false; clear(); return;
+                }
+                chosenFile = file;
+                nameEl.textContent = file.name;
+                if (file.type.startsWith("image/")) { thumb.src = URL.createObjectURL(file); thumb.hidden = false; }
+                else thumb.hidden = true;
+                chosen.hidden = false;
+            });
+            document.getElementById("upload-clear").addEventListener("click", clear);
+        }
+
         const seconds = () => Math.round((Date.now() - startTime) / 1000);
         const tick = () => status.textContent = `${phase} (${seconds()}s)`;
 
@@ -202,6 +243,15 @@
             timer = setInterval(tick, 1000);
             tick();
 
+            // The visitor's file goes in as user_input/<their file name> and is passed to the script as its argument
+            let extra = {};
+            if (chosenFile) {
+                // Keep the visitor's file name (minus unusual characters) so messages mention it
+                const safeName = chosenFile.name.replace(/[^A-Za-z0-9._-]+/g, "_").replace(/^[._]+/, "") || "upload";
+                const path = `user_input/${safeName}`;
+                extra = { files: { [path]: await chosenFile.arrayBuffer() }, args: [path] };
+            }
+
             const ok = await runDemo(repo, project, {
                 status: live(text => { phase = text; tick(); }),
                 stdout: live(text => print(text)),
@@ -212,7 +262,7 @@
                     img.alt = "Image produced by the demo";
                     plots.appendChild(img);
                 }),
-            });
+            }, extra);
             if (thisRun === run) finish(ok ? `Finished in ${seconds()}s.` : "Stopped with an error.");
         });
 
@@ -242,12 +292,28 @@
         const tags = (project.tags || []).map(t => `<span class="tag">${escapeHtml(t)}</span>`).join("");
 
         const lang = project.demo && demoLanguage(project.demo) === "r" ? "R" : "Python";
+        const up = project.demo && project.demo.upload;
+        const uploadBlock = up ? `
+                <div class="demo-upload">
+                    <input id="demo-file" type="file" accept="${escapeHtml(up.accept || "")}">
+                    <label for="demo-file" class="btn btn-outline upload-btn">
+                        <i class="fa-solid fa-upload" aria-hidden="true"></i> ${escapeHtml(up.label || "Use your own file")}</label>
+                    <div id="upload-chosen" class="upload-chosen" hidden>
+                        <img id="upload-thumb" alt="">
+                        <span id="upload-name"></span>
+                        <button id="upload-clear" class="link-btn" type="button">Use the sample instead</button>
+                    </div>
+                    <p class="upload-note">${escapeHtml(up.hint || "")} Your file stays on your device: it's read by the in-browser
+                        Python and never uploaded anywhere.</p>
+                    <p id="upload-error" class="upload-error" role="alert" hidden></p>
+                </div>` : "";
         const demoSection = project.demo ? `
             <section class="card project-block">
                 <h2>Run it</h2>
                 <p class="demo-note">This runs the project's actual code (<code>${escapeHtml(project.demo.entry)}</code>)
                     right here in your browser using ${lang} for the web. Nothing is installed or saved, and refreshing the page clears it.
                     The first run downloads ${lang} into your browser, so it takes ${escapeHtml(project.demo.runtime || "a little longer")}.</p>
+                ${uploadBlock}
                 <div class="demo-controls">
                     <button id="run-btn" class="btn" type="button"><i class="fa-solid fa-play" aria-hidden="true"></i> Run demo</button>
                     <button id="stop-btn" class="btn btn-outline" type="button" hidden><i class="fa-solid fa-stop" aria-hidden="true"></i> Stop</button>

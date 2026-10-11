@@ -72,7 +72,7 @@ function toBase64(bytes) {
 
 let pyWorker = null;
 
-function runPython(project, files, ui) {
+function runPython(project, files, args, ui) {
     return new Promise(resolve => {
         if (!pyWorker) pyWorker = new Worker("/assets/demo-worker.js");
         pyWorker.onmessage = ({ data: msg }) => {
@@ -84,7 +84,7 @@ function runPython(project, files, ui) {
             else if (msg.type === "error") { ui.stderr(cleanTraceback(msg.data)); resolve(false); }
         };
         pyWorker.onerror = e => { ui.stderr(e.message || "The demo crashed."); resolve(false); };
-        pyWorker.postMessage({ entry: project.demo.entry, files, packages: project.demo.packages || [] });
+        pyWorker.postMessage({ entry: project.demo.entry, files, args, packages: project.demo.packages || [] });
     });
 }
 
@@ -155,12 +155,15 @@ async function runR(project, files, ui) {
 
 // ---------- Public: start / stop ----------
 
-export async function runDemo(repo, project, ui) {
+// extra = { files: { "path": ArrayBuffer }, args: ["..."] } for a visitor's own input (optional)
+export async function runDemo(repo, project, ui, extra = {}) {
     try {
         ui.status("Fetching project code…");
         const files = await fetchFiles(project, await listFiles(repo, project));
         if (!(project.demo.entry in files)) throw new Error(`The entry file ${project.demo.entry} isn't in the project folder.`);
-        return demoLanguage(project.demo) === "r" ? await runR(project, files, ui) : await runPython(project, files, ui);
+        Object.assign(files, extra.files || {});      // visitor's file, kept in memory only
+        const args = extra.args || [];
+        return demoLanguage(project.demo) === "r" ? await runR(project, files, ui) : await runPython(project, files, args, ui);
     } catch (err) {
         ui.stderr(String(err.message || err));
         return false;
