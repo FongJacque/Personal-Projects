@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project | Jacque Fong</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+    <nav class="site-nav">
+        <a href="/" class="brand">Jacque Fong</a>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/about.html">About Me</a></li>
+            <li><a href="/projects.html" aria-current="page">Projects</a></li>
+            <li><a href="/resume.html">Resume</a></li>
+        </ul>
+    </nav>
+
+    <main class="container project-page">
+        <a href="/projects.html" class="back-link"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> All projects</a>
+
+        <div id="project-body">
+            <p class="loading">Loading project…</p>
+        </div>
+    </main>
+
+    <footer class="site-footer">© 2026 Jacque Fong</footer>
+
+    <script>
+    // ------------------------------------------------------------------
+    // One template for every project: project.html?id=<project id>.
+    // Details come from /assets/projects.json; activity comes from
+    // GitHub's public API; the demo runs in /assets/demo-worker.js.
+    // ------------------------------------------------------------------
+
+    const params = new URLSearchParams(location.search);
+    const projectId = params.get("id");
+    const body = document.getElementById("project-body");
+
+    function escapeHtml(text) {
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function formatDate(iso) {
+        return new Date(iso).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+    }
+
+    // ---------- Activity: commits from GitHub ----------
+
+    async function fetchCommits(repo, project) {
+        const cacheKey = "commits-v1-" + project.id;
+        try {
+            const saved = JSON.parse(sessionStorage.getItem(cacheKey));
+            if (saved && Date.now() - saved.time < 30 * 60000) return saved.commits;
+        } catch (e) { /* no storage: just fetch */ }
+
+        const paths = [project.path, ...(project.previousPaths || [])];
+        const lists = await Promise.all(paths.map(async path => {
+            const res = await fetch(`https://api.github.com/repos/${repo}/commits?path=${encodeURIComponent(path)}&per_page=100`);
+            if (!res.ok) throw new Error("GitHub API " + res.status);
+            return res.json();
+        }));
+
+        // Merge, drop duplicates (e.g. the commit that moved the folder), newest first
+        const bySha = new Map();
+        lists.flat().forEach(c => bySha.set(c.sha, {
+            sha: c.sha,
+            message: c.commit.message.split("\n")[0],
+            date: c.commit.author.date,
+            url: c.html_url,
+        }));
+        const commits = [...bySha.values()].sort((a, b) => b.date.localeCompare(a.date));
+
+        try { sessionStorage.setItem(cacheKey, JSON.stringify({ time: Date.now(), commits })); } catch (e) {}
+        return commits;
+    }
+
+    function localDayKey(date) {
+        return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+    }
+
+    // GitHub-style grid: one column per week, one square per day, last 52 weeks
+    function activityGrid(commits) {
+        const counts = {};
+        commits.forEach(c => {
+            const key = localDayKey(new Date(c.date));
+            counts[key] = (counts[key] || 0) + 1;
+        });
+
+        const today = new Date(); today.setHours(0, 0, 0, 0);
+        const start = new Date(today);
+        start.setDate(start.getDate() - 7 * 52 - today.getDay());   // back to a Sunday
+
+        let cells = "", months = "", lastMonth = -1, week = 0;
+        for (let d = new Date(start); d <= today; d.setDate(d.getDate() + 1)) {
+            if (d.getDay() === 0) {
+                week++;
+                if (d.getMonth() !== lastMonth) {
+                    lastMonth = d.getMonth();
+                    // skip the label for a partial first month: it would be cut off
+                    const partialFirstMonth = week === 1 && d.getDate() > 7;
+                    if (!partialFirstMonth) months += `<span style="grid-column:${week}">${d.toLocaleDateString(undefined, { month: "short" })}</span>`;
+                }
+            }
+            const n = counts[localDayKey(d)] || 0;
+            const level = n === 0 ? 0 : n === 1 ? 1 : n <= 3 ? 2 : n <= 6 ? 3 : 4;
+            const label = `${n} commit${n === 1 ? "" : "s"} on ${d.toLocaleDateString()}`;
+            cells += `<span class="day level-${level}" title="${label}"></span>`;
+        }
+
+        return `
+            <div class="grid-scroll">
+                <div class="grid-months" style="grid-template-columns:repeat(${week}, 13px)">${months}</div>
+                <div class="activity-grid">${cells}</div>
+            </div>
+            <div class="grid-legend">Less
+                <span class="day level-0"></span><span class="day level-1"></span><span class="day level-2"></span>
+                <span class="day level-3"></span><span class="day level-4"></span> More
+            </div>`;
+    }
+
+    function commitList(commits) {
+        return `<ol class="commit-list">${commits.map(c => `
+            <li>
+                <span class="commit-msg">${escapeHtml(c.message)}</span>
+                <span class="commit-meta">
+                    <time datetime="${c.date}">${formatDate(c.date)}</time>
+                    <a href="${c.url}" target="_blank" rel="noopener" title="View this change on GitHub">${c.sha.slice(0, 7)}</a>
+                </span>
+            </li>`).join("")}</ol>`;
+    }
+
+    async function renderActivity(repo, project) {
+        const box = document.getElementById("activity");
+        try {
+            const commits = await fetchCommits(repo, project);
+            if (!commits.length) { box.innerHTML = `<p class="coming-soon">No commits yet.</p>`; return; }
+            const first = commits[commits.length - 1].date, last = commits[0].date;
+            box.innerHTML = `
+                <p class="activity-summary"><strong>${commits.length}</strong> commit${commits.length === 1 ? "" : "s"}
+                    · started ${formatDate(first)} · last updated ${formatDate(last)}</p>
+                ${activityGrid(commits)}
+                <h3>Recent changes</h3>
+                ${commitList(commits.slice(0, 15))}`;
+            const scroller = box.querySelector(".grid-scroll");
+            scroller.scrollLeft = scroller.scrollWidth;    // show the most recent weeks first on phones
+        } catch (err) {
+            box.innerHTML = `<p class="coming-soon">Activity couldn't load right now (GitHub limits how often it can be checked).
+                See the full history on <a href="https://github.com/${repo}/commits/main/${project.path}" target="_blank" rel="noopener">GitHub</a>.</p>`;
+        }
+    }
+
+    // ---------- Demo: run the project's code in the browser ----------
+
+    function setupDemo(project) {
+        const runBtn  = document.getElementById("run-btn");
+        const stopBtn = document.getElementById("stop-btn");
+        const status  = document.getElementById("demo-status");
+        const output  = document.getElementById("demo-output");
+        const plots   = document.getElementById("demo-plots");
+        let worker = null, startTime = 0, timer = null;
+
+        function print(text, cls) {
+            const line = document.createElement("span");
+            if (cls) line.className = cls;
+            line.textContent = text + "\n";
+            output.appendChild(line);
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function finish(message) {
+            clearInterval(timer);
+            status.textContent = message;
+            runBtn.disabled = false;
+            runBtn.innerHTML = `<i class="fa-solid fa-rotate-right" aria-hidden="true"></i> Run again`;
+            stopBtn.hidden = true;
+        }
+
+        runBtn.addEventListener("click", () => {
+            output.textContent = "";
+            plots.innerHTML = "";
+            output.hidden = false;
+            runBtn.disabled = true;
+            stopBtn.hidden = false;
+            startTime = Date.now();
+            let phase = "Starting…";
+            const tick = () => status.textContent = `${phase} (${Math.round((Date.now() - startTime) / 1000)}s)`;
+            timer = setInterval(tick, 1000);
+            tick();
+
+            if (!worker) worker = new Worker("/assets/demo-worker.js");
+            worker.onmessage = ({ data: msg }) => {
+                if (msg.type === "status") { phase = msg.data; tick(); }
+                else if (msg.type === "stdout") print(msg.data);
+                else if (msg.type === "stderr") print(msg.data, "stderr");
+                else if (msg.type === "image") {
+                    const img = document.createElement("img");
+                    img.src = "data:image/png;base64," + msg.data;
+                    img.alt = "Plot produced by the demo";
+                    plots.appendChild(img);
+                }
+                else if (msg.type === "done")  finish(`Finished in ${Math.round((Date.now() - startTime) / 1000)}s.`);
+                else if (msg.type === "error") { print(msg.data, "stderr"); finish("Stopped with an error."); }
+            };
+            worker.onerror = (e) => { print(e.message || "The demo crashed.", "stderr"); finish("Stopped with an error."); };
+            worker.postMessage({ basePath: project.path, demo: project.demo });
+        });
+
+        stopBtn.addEventListener("click", () => {
+            worker.terminate();      // kills Python immediately; a new one starts on the next run
+            worker = null;
+            print("Stopped.", "stderr");
+            finish("Stopped.");
+        });
+    }
+
+    // ---------- Page ----------
+
+    async function buildPage() {
+        let config;
+        try { config = await (await fetch("/assets/projects.json")).json(); }
+        catch (e) { body.innerHTML = `<p class="coming-soon">This project couldn't load right now.</p>`; return; }
+
+        const project = config.projects.find(p => p.id === projectId);
+        if (!project) {
+            body.innerHTML = `<h1>Project not found</h1><p>Head back to <a href="/projects.html">all projects</a>.</p>`;
+            return;
+        }
+
+        document.title = `${project.name} | Jacque Fong`;
+        const sourceUrl = `https://github.com/${config.repo}/tree/main/${project.path}`;
+        const tags = (project.tags || []).map(t => `<span class="tag">${escapeHtml(t)}</span>`).join("");
+
+        const demoSection = project.demo ? `
+            <section class="card project-block">
+                <h2>Run it</h2>
+                <p class="demo-note">This runs the project's actual code (<code>${escapeHtml(project.demo.entry)}</code>)
+                    right here in your browser using Python for the web. Nothing is installed or saved, and refreshing the page clears it.
+                    The first run downloads Python (about 30&nbsp;MB) and takes ${escapeHtml(project.demo.runtime || "a moment")}.</p>
+                <div class="demo-controls">
+                    <button id="run-btn" class="btn" type="button"><i class="fa-solid fa-play" aria-hidden="true"></i> Run demo</button>
+                    <button id="stop-btn" class="btn btn-outline" type="button" hidden><i class="fa-solid fa-stop" aria-hidden="true"></i> Stop</button>
+                    <span id="demo-status" class="demo-status" aria-live="polite"></span>
+                </div>
+                <pre id="demo-output" class="demo-output" hidden></pre>
+                <div id="demo-plots" class="demo-plots"></div>
+            </section>` : "";
+
+        body.innerHTML = `
+            <header class="project-header">
+                <h1>${escapeHtml(project.name)}</h1>
+                <p>${escapeHtml(project.description)}</p>
+                <div class="tags">${tags}</div>
+                <a class="btn btn-outline source-btn" href="${sourceUrl}" target="_blank" rel="noopener">
+                    <i class="fa-brands fa-github" aria-hidden="true"></i> View source on GitHub</a>
+            </header>
+
+            <section class="card project-block">
+                <h2>Activity</h2>
+                <div id="activity"><p class="loading">Loading activity…</p></div>
+            </section>
+
+            ${demoSection}`;
+
+        renderActivity(config.repo, project);
+        if (project.demo) setupDemo(project);
+    }
+
+    buildPage();
+    </script>
+</body>
+</html>

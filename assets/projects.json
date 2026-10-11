@@ -13,7 +13,13 @@
       "path": "Python-Projects/Federated-Lasso-regression",
       "previousPaths": ["R-Projects/Federated-Lasso-regression"],
       "description": "Three simulated data nodes train one shared sparse model without ever sharing raw data, compared against a centralized baseline.",
-      "tags": ["Python", "NumPy", "pandas", "Federated learning"]
+      "tags": ["Python", "NumPy", "pandas", "Federated learning"],
+      "demo": {
+        "entry": "final_project.py",
+        "files": ["final_project.py", "generate_synthetic_data.py"],
+        "packages": ["numpy", "pandas", "matplotlib"],
+        "runtime": "about 1–2 minutes"
+      }
     }
   ]
 }
