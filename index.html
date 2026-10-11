@@ -8,7 +8,7 @@
     <link rel="icon" type="image/svg+xml" href="/assets/emblem.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Young+Serif&display=swap">
     <link rel="stylesheet" href="/assets/styles.css">
 </head>
 <body>
@@ -24,30 +24,139 @@
 
     <main class="desk">
         <div class="desk-scene">
-            <img class="prop prop-coffee" src="/assets/coffee.svg" alt="">
-            <article class="business-card">
-                <img class="card-emblem" src="/assets/emblem.svg" alt="">
-                <img class="card-photo" src="/assets/profile.jpg" alt="Photo of Jacque Fong">
-                <div class="card-text">
-                    <h1>Jacque Fong</h1>
-                    <p>Data Scientist &amp; Engineer specializing in R, Python, and Computer Vision development.</p>
-                    <div class="actions">
-                        <a href="/projects.html" class="btn">View My Work</a>
-                        <div class="social-links">
-                            <a class="github" href="https://github.com/FongJacque" target="_blank" rel="noopener" aria-label="GitHub" title="GitHub">
-                                <i class="fa-brands fa-github" aria-hidden="true"></i>
-                            </a>
-                            <a class="linkedin" href="https://www.linkedin.com/in/jacque-j-fong/" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn">
-                                <i class="fa-brands fa-linkedin" aria-hidden="true"></i>
-                            </a>
+
+            <!-- Things on the desk that are also links -->
+            <a class="desk-resume" href="/resume.html" aria-label="Resume">
+                <img src="/assets/resume-preview.png" alt="">
+            </a>
+            <a class="desk-notebook" href="/projects.html" aria-label="All projects">
+                <span class="notebook-title">Projects</span>
+            </a>
+            <a class="sticky-note" id="latest-note" href="/projects.html" hidden>
+                <span class="note-label">Latest project</span>
+                <span class="note-name" id="latest-name"></span>
+                <span class="note-date" id="latest-date"></span>
+            </a>
+
+            <!-- Decorative props -->
+            <div class="prop prop-coffee" aria-hidden="true">
+                <img src="/assets/coffee.svg" alt="">
+                <svg class="steam" viewBox="0 0 100 100">
+                    <path d="M40 70 C 30 55, 50 45, 40 30 S 45 10, 38 0"/>
+                    <path d="M55 72 C 65 58, 45 46, 56 32 S 50 12, 58 2"/>
+                    <path d="M48 75 C 40 62, 58 50, 48 36 S 54 16, 46 6"/>
+                </svg>
+            </div>
+            <img class="prop prop-pastry" src="/assets/sfogliatella.svg" alt="" aria-hidden="true">
+
+            <!-- The business card: front and back -->
+            <div class="card-wrap">
+                <div class="card-flipper" id="card">
+                    <article class="business-card card-front" aria-label="Business card, front">
+                        <img class="card-emblem" src="/assets/emblem.svg" alt="">
+                        <img class="card-photo" src="/assets/profile.jpg" alt="Photo of Jacque Fong">
+                        <div class="card-text">
+                            <h1>Jacque Fong</h1>
+                            <p>Data Scientist &amp; Engineer specializing in R, Python, and Computer Vision development.</p>
+                            <div class="actions">
+                                <a href="/projects.html" class="btn">View My Work</a>
+                                <div class="social-links">
+                                    <a class="github" href="https://github.com/FongJacque" target="_blank" rel="noopener" aria-label="GitHub" title="GitHub">
+                                        <i class="fa-brands fa-github" aria-hidden="true"></i>
+                                    </a>
+                                    <a class="linkedin" href="https://www.linkedin.com/in/jacque-j-fong/" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn">
+                                        <i class="fa-brands fa-linkedin" aria-hidden="true"></i>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                        <button class="flip-btn" type="button" data-flip>
+                            <i class="fa-solid fa-rotate" aria-hidden="true"></i> Turn over
+                        </button>
+                    </article>
+
+                    <article class="business-card card-back" aria-label="Business card, back" inert>
+                        <img class="card-emblem" src="/assets/emblem.svg" alt="">
+                        <div class="back-text">
+                            <h2>A little more about me</h2>
+                            <p>I study Statistics and Data Science at UCLA, after nine years as an intelligence
+                                analyst in the U.S. Army. I like turning messy data into clear answers, mostly in R and Python.</p>
+                            <p class="currently"><strong>Currently:</strong> open to internships and entry-level roles
+                                in data science, analytics, and statistics.</p>
+                            <div class="back-links">
+                                <a class="btn" href="/about.html">About me</a>
+                                <a class="btn btn-outline" href="/resume.html">Resume</a>
+                            </div>
+                        </div>
+                        <button class="flip-btn" type="button" data-flip>
+                            <i class="fa-solid fa-rotate" aria-hidden="true"></i> Turn back
+                        </button>
+                    </article>
                 </div>
-            </article>
-            <img class="prop prop-pastry" src="/assets/sfogliatella.svg" alt="">
+            </div>
         </div>
     </main>
 
     <footer class="site-footer">© 2026 Jacque Fong</footer>
+
+    <script>
+    // ---------- Flip the business card ----------
+    (function () {
+        const card  = document.getElementById("card");
+        const front = card.querySelector(".card-front");
+        const back  = card.querySelector(".card-back");
+        card.querySelectorAll("[data-flip]").forEach(btn => btn.addEventListener("click", () => {
+            const flipped = card.classList.toggle("flipped");
+            // Only the face you can see can be clicked or tabbed into
+            front.inert = flipped;
+            back.inert = !flipped;
+            (flipped ? back : front).querySelector("[data-flip]").focus({ preventScroll: true });
+        }));
+    })();
+
+    // ---------- Sticky note: the most recently updated project ----------
+    (async function () {
+        const note = document.getElementById("latest-note");
+        function timeAgo(iso) {
+            const days = Math.floor((Date.now() - new Date(iso)) / 86400000);
+            if (days < 1) return "today";
+            if (days < 2) return "yesterday";
+            if (days < 30) return `${days} days ago`;
+            const months = Math.floor(days / 30);
+            return months < 12 ? `${months} month${months > 1 ? "s" : ""} ago` : "over a year ago";
+        }
+        async function lastCommit(repo, path) {
+            const res = await fetch(`https://api.github.com/repos/${repo}/commits?path=${encodeURIComponent(path)}&per_page=1`);
+            if (!res.ok) return null;
+            const list = await res.json();
+            return list.length ? list[0].commit.committer.date : null;
+        }
+        try {
+            const config = await (await fetch("/assets/projects.json")).json();
+            if (!config.projects.length) return;
+
+            // Same 30-minute cache the Projects page uses, so this rarely calls GitHub
+            let dates = null;
+            try {
+                const saved = JSON.parse(sessionStorage.getItem("project-dates-v1"));
+                if (saved && Date.now() - saved.time < 30 * 60000) dates = saved.dates;
+            } catch (e) {}
+            if (!dates) {
+                dates = {};
+                await Promise.all(config.projects.map(async p => {
+                    const found = await Promise.all([p.path, ...(p.previousPaths || [])].map(path => lastCommit(config.repo, path).catch(() => null)));
+                    dates[p.id] = found.filter(Boolean).sort().pop() || null;
+                }));
+                try { if (Object.values(dates).some(Boolean)) sessionStorage.setItem("project-dates-v1", JSON.stringify({ time: Date.now(), dates })); } catch (e) {}
+            }
+
+            const latest = [...config.projects].sort((a, b) => (dates[b.id] || "").localeCompare(dates[a.id] || ""))[0];
+            document.getElementById("latest-name").textContent = latest.name;
+            document.getElementById("latest-date").textContent = dates[latest.id] ? `updated ${timeAgo(dates[latest.id])}` : "";
+            note.href = `/project.html?id=${encodeURIComponent(latest.id)}`;
+            note.hidden = false;
+        } catch (e) { /* no note if projects can't load */ }
+    })();
+    </script>
 </body>
 </html>

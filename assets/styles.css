@@ -190,39 +190,64 @@ img { max-width: 100%; height: auto; }
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 6rem 1.5rem;
-    overflow: hidden;                 /* props can run off the edge of the desk */
+    padding: 7rem 1.5rem 8rem;
+    overflow: hidden;                 /* things can run off the edge of the desk */
+    /* soft window light from the upper left */
+    background: linear-gradient(118deg, rgba(255, 238, 210, 0.16) 0%, rgba(255, 238, 210, 0) 42%, rgba(20, 10, 4, 0.22) 100%);
 }
 
-.desk-scene { position: relative; width: min(680px, 100%); }
-
-.business-card {
+/* Everything in the scene is sized from the scene's width (cqw), so it scales with the screen */
+.desk-scene {
     position: relative;
-    z-index: 1;
-    aspect-ratio: 7 / 4;              /* a real 3.5 x 2 in card */
-    display: grid;
-    grid-template-columns: auto 1fr;
-    align-items: center;
-    gap: 2.25rem;
-    padding: 2.5rem 2.75rem;
-    background:
-        radial-gradient(120% 90% at 20% 10%, #fffefb 0%, var(--paper) 55%, #f3ede2 100%);
-    border-radius: 6px;
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25), 0 22px 34px -10px rgba(20, 10, 4, 0.7);
+    width: clamp(300px, 54vw, 900px);
+    container-type: inline-size;
+}
+
+/* --- The card: wrapper tilts it and lands it; flipper turns it over --- */
+.card-wrap {
+    position: relative;
+    z-index: 2;
+    perspective: 1600px;
     transform: rotate(-2deg);
     animation: card-land 0.7s cubic-bezier(.2, .8, .3, 1) both;
 }
-
 @keyframes card-land {
     from { opacity: 0; transform: translateY(-28px) rotate(-7deg); }
     to   { opacity: 1; transform: rotate(-2deg); }
 }
 
-.card-emblem { position: absolute; top: 1.1rem; right: 1.1rem; width: 46px; }
+.card-flipper {
+    display: grid;
+    transform-style: preserve-3d;
+    transition: transform 0.75s cubic-bezier(.4, .1, .2, 1);
+}
+.card-flipper.flipped { transform: rotateY(180deg); }
+
+.business-card {
+    grid-area: 1 / 1;                 /* front and back occupy the same spot */
+    position: relative;
+    aspect-ratio: 7 / 4;              /* a real 3.5 x 2 in card */
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    padding: 6cqw 6.5cqw;
+    background: radial-gradient(120% 90% at 20% 10%, #fffefb 0%, var(--paper) 55%, #f3ede2 100%);
+    border-radius: 6px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25), 0 22px 34px -10px rgba(20, 10, 4, 0.7);
+}
+.card-back { transform: rotateY(180deg); }
+
+.card-front {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 5cqw;
+}
+
+.card-emblem { position: absolute; top: 2.6cqw; right: 2.6cqw; width: 7cqw; min-width: 38px; }
 
 .card-photo {
-    width: 190px;
-    height: 190px;
+    width: 27cqw;
+    height: 27cqw;
     object-fit: cover;
     object-position: center top;
     border-radius: 50%;
@@ -230,19 +255,15 @@ img { max-width: 100%; height: auto; }
 }
 
 .card-text { text-align: left; }
-.card-text h1 { font-size: clamp(2rem, 4.5vw, 2.75rem); margin: 0 0 0.4rem; }
-.card-text p  { margin: 0 0 1.4rem; font-size: 1.05rem; color: #4a3e35; max-width: 30ch; }
+.card-text h1 { font-size: clamp(2rem, 6.4cqw, 3.6rem); margin: 0 0 0.4rem; }
+.card-text p  { margin: 0 0 1.4rem; font-size: clamp(1rem, 2.5cqw, 1.35rem); color: #4a3e35; max-width: 30ch; }
+.card-front .btn { font-size: clamp(0.95rem, 2.2cqw, 1.15rem); }
 
-.actions {
-    display: flex;
-    flex-direction: column;
-    align-items: center;              /* button and icons centered under the text */
-    gap: 1rem;
-}
+.actions { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
 
 .social-links { display: flex; gap: 1.25rem; }
 .social-links a {
-    font-size: 1.9rem;
+    font-size: clamp(1.75rem, 4.3cqw, 2.4rem);
     line-height: 1;
     text-decoration: none;
     transition: opacity 0.2s, transform 0.2s;
@@ -251,33 +272,178 @@ img { max-width: 100%; height: auto; }
 .social-links .linkedin { color: #0a66c2; }   /* LinkedIn's brand blue */
 .social-links a:hover   { opacity: 0.75; transform: translateY(-2px); }
 
-/* Desk props (decorative) */
-.prop { position: absolute; z-index: 2; pointer-events: none; user-select: none; }
-.prop-coffee { width: 250px; top: -120px; right: -205px; }
-.prop-pastry { width: 310px; bottom: -150px; left: -235px; transform: rotate(-8deg); }
+.flip-btn {
+    position: absolute;
+    right: 2.2cqw;
+    bottom: 2cqw;
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: transparent;
+    border: 1px solid rgba(45, 36, 30, 0.2);
+    border-radius: 999px;
+    padding: 0.3rem 0.8rem;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+.flip-btn:hover { color: var(--primary); border-color: var(--primary); background: rgba(139, 90, 43, 0.06); }
 
-@media (prefers-reduced-motion: reduce) {
-    .business-card { animation: none; }
+.card-back { display: flex; align-items: center; }
+.back-text { max-width: 78%; }
+.back-text h2 { font-size: clamp(1.5rem, 4.2cqw, 2.3rem); margin: 0 0 0.75rem; }
+.back-text p  { margin: 0 0 0.9rem; font-size: clamp(0.98rem, 2.3cqw, 1.25rem); color: #4a3e35; }
+.back-text .currently strong { color: var(--primary); }
+.back-links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.25rem; }
+.back-links .btn { padding: 0.65rem 1.4rem; }
+
+/* --- Desk objects that are links --- */
+.desk-resume {
+    position: absolute;
+    z-index: 1;
+    width: 44cqw;
+    top: -17cqw;
+    left: 5cqw;
+    transform: rotate(-7deg);
+    transition: transform 0.25s;
+}
+.desk-resume img {
+    display: block;
+    width: 100%;
+    background: #fff;
+    border-radius: 2px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2), 0 14px 22px -8px rgba(20, 10, 4, 0.6);
+}
+.desk-resume:hover, .desk-resume:focus-visible { transform: rotate(-7deg) translateY(-12px); }
+
+.desk-notebook {
+    position: absolute;
+    z-index: 1;
+    width: 34cqw;
+    aspect-ratio: 3 / 4;
+    right: -31cqw;
+    bottom: -25cqw;
+    transform: rotate(9deg);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 4cqw;
+    text-decoration: none;
+    border-radius: 4px 10px 10px 4px;
+    background:
+        linear-gradient(90deg, rgba(0, 0, 0, 0.35) 0, rgba(0, 0, 0, 0) 9%),          /* spine shading */
+        radial-gradient(120% 80% at 30% 20%, #5a3b28 0%, #3c271a 70%, #2e1d13 100%);  /* leather */
+    box-shadow:
+        5px 0 0 -1px #efe6d6, 8px 0 0 -2px #e2d6c2, 11px 0 0 -3px #d6c8b1,          /* page edges */
+        0 18px 28px -10px rgba(20, 10, 4, 0.75);
+    transition: transform 0.25s;
+}
+.desk-notebook::after {                    /* elastic band */
+    content: "";
+    position: absolute;
+    top: 0; bottom: 0; right: 14%;
+    width: 4%;
+    background: linear-gradient(90deg, #1c120b, #34221a, #1c120b);
+}
+.notebook-title {
+    font-family: var(--font-display);
+    font-size: clamp(1rem, 3cqw, 1.7rem);
+    color: #d9b277;                         /* gold foil */
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
+}
+.desk-notebook:hover, .desk-notebook:focus-visible { transform: rotate(9deg) translateY(-8px); }
+
+.sticky-note {
+    position: absolute;
+    z-index: 3;
+    width: 25cqw;
+    min-width: 170px;
+    right: -27cqw;
+    bottom: -13cqw;
+    transform: rotate(4deg);
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 1.1rem 1rem 1rem;
+    font-family: "Caveat", "Segoe Print", "Bradley Hand", cursive;
+    color: #2b2118;
+    text-decoration: none;
+    background: linear-gradient(180deg, #f8e58c 0%, #f3da6f 100%);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15), 0 12px 18px -8px rgba(20, 10, 4, 0.6);
+    transition: transform 0.25s;
+}
+.sticky-note::before {                      /* the sticky strip along the top */
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 18%;
+    background: rgba(0, 0, 0, 0.04);
+}
+.note-label { font-size: 1.15rem; opacity: 0.75; }
+.note-name  { font-size: clamp(1.35rem, 3cqw, 1.75rem); font-weight: 700; line-height: 1.05; }
+.note-date  { font-size: 1.1rem; opacity: 0.8; }
+.sticky-note:hover, .sticky-note:focus-visible { color: #2b2118; transform: rotate(2deg) translateY(-6px); }
+
+/* --- Decorative props --- */
+.prop { position: absolute; z-index: 4; pointer-events: none; user-select: none; }
+.prop-coffee { width: 37cqw; top: -18cqw; right: -30cqw; }
+.prop-coffee img { display: block; width: 100%; }
+.prop-pastry { width: 46cqw; bottom: -22cqw; left: -35cqw; transform: rotate(-8deg); }
+
+.steam {
+    position: absolute;
+    left: 30%; top: 4%;
+    width: 40%;
+    overflow: visible;
+}
+.steam path {
+    fill: none;
+    stroke: #fff;
+    stroke-width: 3;
+    stroke-linecap: round;
+    opacity: 0;
+    filter: blur(1.5px);
+    animation: steam 5s ease-in-out infinite;
+}
+.steam path:nth-child(2) { animation-delay: 1.6s; }
+.steam path:nth-child(3) { animation-delay: 3.2s; }
+@keyframes steam {
+    0%   { opacity: 0;    transform: translateY(12px) scaleX(0.9); }
+    35%  { opacity: 0.45; }
+    100% { opacity: 0;    transform: translateY(-26px) scaleX(1.15); }
 }
 
-/* Phones and small tablets: card stands upright, props peek in from the corners */
+@media (prefers-reduced-motion: reduce) {
+    .card-wrap { animation: none; }
+    .card-flipper { transition: none; }
+    .steam { display: none; }
+}
+
+/* Phones and small tablets: card stands upright; only the cup and pastry peek in */
 @media (max-width: 760px) {
-    .desk { padding: 5rem 1rem 6rem; }
-    .business-card {
-        aspect-ratio: auto;
-        grid-template-columns: 1fr;
-        justify-items: center;
-        gap: 1.25rem;
-        padding: 2.25rem 1.5rem 2rem;
-        transform: none;
-        animation-name: card-land-flat;
-    }
+    .desk { padding: 5rem 1rem 3rem; flex-direction: column; }
+    .desk-scene { width: 100%; display: flex; flex-direction: column; }
+    .card-wrap { order: 1; transform: none; animation-name: card-land-flat; }
     @keyframes card-land-flat { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: none; } }
+    .business-card { aspect-ratio: auto; padding: 2.25rem 1.5rem 3.5rem; }
+    .card-front { grid-template-columns: 1fr; justify-items: center; gap: 1.25rem; }
     .card-photo { width: 150px; height: 150px; }
     .card-text, .card-text p { text-align: center; margin-left: auto; margin-right: auto; }
+    .card-back { align-items: flex-start; }
+    .back-text { max-width: 100%; padding-top: 2.5rem; }
+    .flip-btn { right: 50%; transform: translateX(50%); bottom: 1rem; }
+    .desk-resume, .desk-notebook { display: none; }
+    .sticky-note {
+        position: relative;
+        right: auto; bottom: auto;
+        order: 2;
+        width: 230px;
+        margin: 2.25rem auto 0;
+        transform: rotate(-2deg);
+    }
     .prop { z-index: 0; }
     .prop-coffee { width: 150px; top: -78px; right: -48px; }
-    .prop-pastry { width: 180px; bottom: -92px; left: -60px; }
+    .prop-pastry { width: 190px; bottom: -40px; top: auto; left: -70px; }
 }
 
 /* ---------- Projects page (projects.html) ---------- */
