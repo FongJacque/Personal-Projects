@@ -187,6 +187,7 @@ img { max-width: 100%; height: auto; }
 
 /* ---------- Home page (index.html): a business card on the desk ---------- */
 .desk {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -389,6 +390,10 @@ img { max-width: 100%; height: auto; }
 .prop-coffee { width: 37cqw; top: -18cqw; right: -30cqw; }
 .prop-coffee img { display: block; width: 100%; }
 .prop-pastry { width: 46cqw; bottom: -22cqw; left: -35cqw; transform: rotate(-8deg); }
+/* Drawing tablet peeking in from the top-right corner of the desk */
+.prop-tablet { z-index: 0; width: clamp(280px, 31vw, 580px); top: -9vw; right: -3vw; transform: rotate(-11deg); }
+/* Tablet pen lying below the card, centered */
+.prop-pen { z-index: 1; width: 50cqw; left: 25cqw; bottom: -13cqw; transform: rotate(-3deg); }
 
 .steam {
     position: absolute;
@@ -432,7 +437,7 @@ img { max-width: 100%; height: auto; }
     .card-back { align-items: flex-start; }
     .back-text { max-width: 100%; padding-top: 2.5rem; }
     .flip-btn { right: 50%; transform: translateX(50%); bottom: 1rem; }
-    .desk-resume, .desk-notebook { display: none; }
+    .desk-resume, .desk-notebook, .prop-tablet, .prop-pen { display: none; }
     .sticky-note {
         position: relative;
         right: auto; bottom: auto;

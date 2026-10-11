@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 46">
+<defs>
+ <filter id="sh" x="-10%" y="-60%" width="120%" height="220%"><feGaussianBlur stdDeviation="3.5"/></filter>
+ <linearGradient id="barrel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#55555d"/><stop offset=".35" stop-color="#2c2c32"/><stop offset="1" stop-color="#16161a"/></linearGradient>
+ <linearGradient id="grip" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a4a52"/><stop offset=".4" stop-color="#34343a"/><stop offset="1" stop-color="#202025"/></linearGradient>
+ <linearGradient id="ring" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e2d3bb"/><stop offset=".45" stop-color="#b59870"/><stop offset="1" stop-color="#7c6244"/></linearGradient>
+ <linearGradient id="tip" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5a5a62"/><stop offset="1" stop-color="#1c1c20"/></linearGradient>
+</defs>
+<path d="M22 30 H330 L392 34 L404 34.5 L392 36 L330 41 H22 Q10 35.5 22 30 Z" fill="#120904" opacity=".5" filter="url(#sh)"/>
+<rect x="14" y="13" width="34" height="18" rx="9" fill="url(#barrel)"/>
+<rect x="38" y="12" width="210" height="20" rx="4" fill="url(#barrel)"/>
+<rect x="240" y="11.5" width="7" height="21" fill="url(#ring)"/>
+<rect x="247" y="12" width="80" height="20" rx="3" fill="url(#grip)"/>
+<rect x="262" y="8.5" width="34" height="8" rx="4" fill="#3c3c43" stroke="#121215" stroke-width="1"/>
+<path d="M327 12 L384 19.5 Q390 22 384 24.5 L327 32 Z" fill="url(#tip)"/>
+<path d="M384 19.8 L396 21.6 Q398 22 396 22.4 L384 24.2 Z" fill="#cfcfd4"/>
+<path d="M44 15 H236" stroke="#ffffff" stroke-opacity=".18" stroke-width="2" stroke-linecap="round"/>
+</svg>
