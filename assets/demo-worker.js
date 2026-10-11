@@ -28,7 +28,10 @@ async function startPython() {
         throw new Error("Couldn't download Python. " + DOWNLOAD_HELP);
     }
     pyodide.setStdout({ batched: line => send("stdout", line) });
-    pyodide.setStderr({ batched: line => send("stderr", line) });
+    pyodide.setStderr({ batched: line => {
+        if (/building the font cache/i.test(line)) return;   // routine first-run setup message, not an error
+        send("stderr", line);
+    } });
     pyodide.setStdin({ stdin: () => null });   // demos can't ask for typed input; input() raises EOFError
     pyodide.registerJsModule("demo_bridge", {
         image: (mime, base64) => send("image", { mime, base64 }),

@@ -1,9 +1,18 @@
 {
   "repo": "FongJacque/Personal-Projects",
   "sections": [
-    { "id": "r",      "title": "R Projects" },
-    { "id": "python", "title": "Python Projects" },
-    { "id": "cv",     "title": "Computer Vision Projects" }
+    {
+      "id": "r",
+      "title": "R Projects"
+    },
+    {
+      "id": "python",
+      "title": "Python Projects"
+    },
+    {
+      "id": "cv",
+      "title": "Computer Vision Projects"
+    }
   ],
   "projects": [
     {
@@ -11,12 +20,68 @@
       "name": "Federated Lasso Regression",
       "section": "python",
       "path": "Python-Projects/Federated-Lasso-regression",
-      "previousPaths": ["R-Projects/Federated-Lasso-regression"],
+      "previousPaths": [
+        "R-Projects/Federated-Lasso-regression"
+      ],
       "description": "Three simulated data nodes train one shared sparse model without ever sharing raw data, compared against a centralized baseline.",
-      "tags": ["Python", "NumPy", "pandas", "Federated learning"],
+      "tags": [
+        "Python",
+        "NumPy",
+        "pandas",
+        "Federated learning"
+      ],
       "demo": {
         "entry": "final_project.py",
         "runtime": "about 1–2 minutes"
+      }
+    },
+    {
+      "id": "image-segmentation",
+      "name": "Image Segmentation from Scratch",
+      "section": "cv",
+      "path": "Computer-Vision-Projects/Image-Segmentation",
+      "description": "Felzenszwalb segmentation, SLIC superpixels and blob detection, written without a computer vision library and compared side by side on a photo.",
+      "tags": [
+        "Python",
+        "NumPy",
+        "SciPy",
+        "Graph algorithms"
+      ],
+      "demo": {
+        "entry": "demo.py",
+        "runtime": "about a minute"
+      }
+    },
+    {
+      "id": "word-memory-experiment",
+      "name": "Word Recognition Memory Experiment",
+      "section": "python",
+      "path": "Python-Projects/Word-Memory-Experiment",
+      "description": "A psychology experiment I designed and ran: do people remember words better when they fit the scene? Includes the analysis of the results.",
+      "tags": [
+        "Python",
+        "pandas",
+        "SciPy",
+        "Experimental design"
+      ],
+      "demo": {
+        "entry": "analyze_results.py",
+        "runtime": "about 30 seconds"
+      }
+    },
+    {
+      "id": "bingo-card-generator",
+      "name": "Bingo Card Generator",
+      "section": "python",
+      "path": "Python-Projects/Bingo-Card-Generator",
+      "description": "Builds a random 5 × 5 bingo card from numbers or your own word list and draws it as an image.",
+      "tags": [
+        "Python",
+        "Pillow"
+      ],
+      "demo": {
+        "entry": "bingo_card.py",
+        "runtime": "a few seconds once Python has loaded"
       }
     }
   ]
