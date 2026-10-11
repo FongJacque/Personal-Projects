@@ -289,6 +289,23 @@
         });
     }
 
+    // ---------- Optional interactive section (a project's own script) ----------
+
+    async function mountWidget(project) {
+        const root = document.getElementById("widget-root");
+        const base = "/" + project.path.replace(/\/$/, "") + "/";
+        try {
+            const widget = await import(base + project.widget.script);
+            widget.mount(root, {
+                basePath: base,
+                imageUrl: project.widget.image ? base + project.widget.image : null,
+                config: project.widget,
+            });
+        } catch (err) {
+            root.innerHTML = `<p class="coming-soon">This part couldn't load right now. Try refreshing the page.</p>`;
+        }
+    }
+
     // ---------- Page ----------
 
     async function buildPage() {
@@ -336,7 +353,7 @@
                 </div>` : "";
         const demoSection = project.demo ? `
             <section class="card project-block">
-                <h2>Run it</h2>
+                <h2>${escapeHtml(project.demo.title || "Run it")}</h2>
                 <p class="demo-note">This runs the project's actual code (<code>${escapeHtml(project.demo.entry)}</code>)
                     right here in your browser using ${lang} for the web. Nothing is installed or saved, and refreshing the page clears it.
                     The first run downloads ${lang} into your browser, so it takes ${escapeHtml(project.demo.runtime || "a little longer")}.</p>
@@ -360,6 +377,12 @@
                     <i class="fa-brands fa-github" aria-hidden="true"></i> View source on GitHub</a>
             </header>
 
+            ${project.widget ? `
+            <section class="card project-block">
+                <h2>${escapeHtml(project.widget.title || "Try it yourself")}</h2>
+                <div id="widget-root"><p class="loading">Loading…</p></div>
+            </section>` : ""}
+
             <section class="card project-block">
                 <h2>Activity</h2>
                 <div id="activity"><p class="loading">Loading activity…</p></div>
@@ -368,6 +391,7 @@
             ${demoSection}`;
 
         renderActivity(config.repo, project);
+        if (project.widget) mountWidget(project);
         if (project.demo) setupDemo(config.repo, project);
     }
 

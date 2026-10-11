@@ -671,6 +671,59 @@ button.btn:disabled { opacity: 0.6; cursor: wait; transform: none; }
 .demo-text textarea:focus { outline: 3px solid var(--nav-accent); outline-offset: 1px; border-color: var(--primary); }
 .demo-text-actions { display: flex; gap: 1.25rem; margin-top: 0.4rem; }
 
+/* ---------- Word memory mini-experiment (web/mini_experiment.js) ---------- */
+.mx-note { font-size: 0.88rem; color: var(--text-muted); }
+.mx-start { margin-top: 0.5rem; }
+
+.mx-study { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+.mx-scene { width: 100%; max-width: 560px; max-height: 42vh; object-fit: cover; border-radius: 6px; box-shadow: var(--shadow); }
+.mx-words {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-rows: repeat(5, auto); grid-auto-flow: column; gap: 0.45rem 2.2rem;
+    font-family: var(--font-display); font-size: 1.2rem; color: var(--heading);
+}
+.mx-timer { display: flex; align-items: center; gap: 0.75rem; width: 100%; max-width: 560px; }
+.mx-bar { flex: 1; height: 6px; background: rgba(45, 36, 30, 0.12); border-radius: 999px; overflow: hidden; }
+.mx-bar span { display: block; height: 100%; background: var(--primary); transition: width 0.2s linear; }
+.mx-count { font-variant-numeric: tabular-nums; color: var(--text-muted); min-width: 3ch; text-align: right; }
+
+.mx-test { text-align: center; padding: 1rem 0 0.5rem; }
+.mx-progress { margin: 0; color: var(--text-muted); font-size: 0.9rem; }
+.mx-question { margin: 1rem 0 0.25rem; font-size: 1.1rem; }
+.mx-word { margin: 0 0 1.5rem; font-family: var(--font-display); font-size: clamp(2.2rem, 7vw, 3.2rem); color: var(--heading); min-height: 1.3em; }
+.mx-answers { display: flex; justify-content: center; gap: 1rem; }
+.mx-answers .btn { min-width: 8.5rem; }
+
+.mx-verdict { font-size: 1.1rem; font-weight: 600; margin-top: 0; }
+.mx-table { width: 100%; border-collapse: collapse; margin: 0.5rem 0 1rem; }
+.mx-table th, .mx-table td { padding: 0.55rem 0.5rem; border-bottom: 1px solid rgba(45, 36, 30, 0.12); text-align: left; }
+.mx-table thead th { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
+.mx-table td { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.mx-table tbody th { font-weight: 500; }
+.mx-lures { margin: 0 0 1rem; }
+
+.mx-chart { display: block; max-width: 100%; height: auto; margin-top: 0.75rem; overflow: visible; }
+.mx-grid { stroke: rgba(45, 36, 30, 0.12); }
+.mx-tick { font-size: 12px; fill: var(--text-muted); }
+.mx-label { font-size: 13px; font-weight: 600; fill: var(--text); }
+.mx-dot { fill: #b9ab9a; opacity: 0.85; }
+.mx-mean { stroke: var(--heading); stroke-width: 2.5; }
+.mx-you { fill: var(--primary); stroke: #fff; stroke-width: 2.5; }
+.mx-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 1.1rem; font-size: 0.85rem; color: var(--text-muted); margin: 0.25rem 0 0; }
+.mx-legend > span { white-space: nowrap; }
+.mx-key { display: inline-block; width: 12px; height: 12px; border-radius: 50%; vertical-align: -1px; margin-right: 0.2rem; }
+.mx-key-you { background: var(--primary); }
+.mx-key-dot { background: #b9ab9a; }
+.mx-key-mean { width: 3px; height: 14px; border-radius: 0; background: var(--heading); }
+.mx-again { margin-top: 0.75rem; }
+
+@media (max-width: 600px) {
+    .mx-words { gap: 0.4rem 1.3rem; font-size: 1.05rem; }
+    .mx-table { font-size: 0.9rem; }
+    .mx-table th, .mx-table td { padding: 0.5rem 0.3rem; }
+    .mx-table td { white-space: normal; }
+}
+
 /* ---------- Resume page (resume.html) ---------- */
 .resume-page { text-align: center; }
 .resume-page h1 { margin-bottom: 0.5rem; }

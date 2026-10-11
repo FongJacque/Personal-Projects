@@ -63,7 +63,7 @@
       "name": "Word Recognition Memory Experiment",
       "section": "python",
       "path": "Python-Projects/Word-Memory-Experiment",
-      "description": "A psychology experiment I designed and ran: do people remember words better when they fit the scene? Includes the analysis of the results.",
+      "description": "A psychology experiment I designed and ran: do people remember words better when they fit the scene? Take a round yourself and see how you compare.",
       "tags": [
         "Python",
         "pandas",
@@ -72,7 +72,13 @@
       ],
       "demo": {
         "entry": "analyze_results.py",
-        "runtime": "about 30 seconds"
+        "runtime": "about 30 seconds",
+        "title": "The study's results"
+      },
+      "widget": {
+        "title": "Try it yourself",
+        "script": "web/mini_experiment.js",
+        "image": "images/practice.jpg"
       }
     },
     {

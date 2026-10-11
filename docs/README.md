@@ -42,6 +42,7 @@ Add it inside the `"projects": [ ... ]` list, with a comma between entries.
 | `tags` | no | Little labels under the description |
 | `previousPaths` | no | Old folder names if you ever move the project, so its history isn't lost |
 | `demo` | no | Leave it out and the project page shows activity only |
+| `widget` | no | An interactive section of your own (JavaScript) shown above the activity. See below |
 
 ### The `demo` block
 
@@ -110,6 +111,31 @@ Packages are detected automatically:
   Pure-Python packages from PyPI (e.g. seaborn) are installed on the fly.
 - **R:** from `library()`, `require()` and `pkg::` in any `.R` file, installed from the webR package repository
   (most CRAN packages, including the tidyverse).
+
+### Adding an interactive section
+
+For something the Python demo can't do, like taking keyboard or button input
+live, a project can include its own small JavaScript file:
+
+```json
+"widget": {
+  "title": "Try it yourself",
+  "script": "web/my_widget.js",
+  "image": "images/photo.jpg"
+}
+```
+
+The file (inside the project folder) must export a `mount` function. The page calls it with
+an empty box to fill and the project's file locations:
+
+```js
+export function mount(root, { basePath, imageUrl, config }) {
+  root.innerHTML = "<p>Hello</p>";
+}
+```
+
+`Word-Memory-Experiment/web/mini_experiment.js` is a full example. Optionally,
+`"demo": { "title": "…" }` renames the demo section (it says "Run it" by default).
 
 ## 3. Make the code demo-friendly
 

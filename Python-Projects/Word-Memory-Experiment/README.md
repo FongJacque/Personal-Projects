@@ -54,6 +54,20 @@ experiment, add your own grayscale photos to `images/`:
 | `test2.jpg` | Snowy cabin in the mountains | snow, pine, ridge, frost… |
 | `test3.jpg` | Lake or river with trees | shore, willow, ripple, heron… |
 
+## Try it on the website
+
+The project page has a **Try it yourself** section: a one-round web version
+of the experiment (`web/mini_experiment.js`). It follows the practice round
+exactly: the theater photo with 20 words for 30 seconds, then 20 yes/no
+questions, using the same word lists and selection rules as `experiment.py`.
+Visitors then see their recognition rates next to each of the 7 study
+participants.
+
+Visitor answers are never saved or sent anywhere, and they aren't added to
+the study: website visitors take the test under uncontrolled conditions, so
+their answers wouldn't be comparable research data. The study's results stay
+exactly as collected.
+
 ## Data
 
 `results/` holds one Excel file per participant per round, named
