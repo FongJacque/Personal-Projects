@@ -5,8 +5,9 @@
 
 /* ---------- 1. Design tokens (the one place colors live) ---------- */
 :root {
+    --wood:          #7d5030;          /* desk color while the wood image loads */
+    --paper:         #fdfbf6;          /* business card + page sheets */
     --bg-base:       #e6dccf;
-    --bg-streak:     #dfd4c5;
     --text:          #2d241e;
     --text-muted:    #5c4d41;
     --heading:       #1a130e;
@@ -21,6 +22,8 @@
     --shadow:        0 6px 20px rgba(45, 36, 30, 0.08);
     --radius:        12px;
     --font:          system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --font-display:  "Young Serif", Georgia, "Times New Roman", serif;
+    --sheet-shadow:  0 1px 2px rgba(0, 0, 0, 0.25), 0 26px 40px -14px rgba(20, 10, 4, 0.65);
 }
 
 /* ---------- 2. Base ---------- */
@@ -34,19 +37,29 @@ body {
     font-family: var(--font);
     color: var(--text);
     line-height: 1.6;
-    background: repeating-linear-gradient(
-        90deg,
-        var(--bg-base),
-        var(--bg-base) 120px,
-        var(--bg-streak) 121px,
-        var(--bg-base) 122px,
-        var(--bg-base) 240px
-    );
+    background: var(--wood) url("/assets/wood.svg") repeat;   /* the wooden desk */
+}
+
+/* Emblem in the bottom-right corner of every page */
+body::after {
+    content: "";
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    width: 78px;
+    height: 78px;
+    background: url("/assets/emblem.svg") center / contain no-repeat;
+    filter: drop-shadow(0 4px 6px rgba(20, 10, 4, 0.5));
+    pointer-events: none;
+    z-index: 50;
 }
 
 main { flex: 1; }   /* pushes the footer to the bottom on short pages */
 
 h1, h2, h3 { color: var(--heading); line-height: 1.2; }
+h1, h2 { font-family: var(--font-display); font-weight: 400; }
+
+:focus-visible { outline: 3px solid var(--nav-accent); outline-offset: 3px; }
 
 a { color: var(--primary); }
 a:hover { color: var(--primary-hover); }
@@ -68,8 +81,8 @@ img { max-width: 100%; height: auto; }
 }
 
 .site-nav .brand {
-    font-size: 1.25rem;
-    font-weight: 700;
+    font-family: var(--font-display);
+    font-size: 1.35rem;
     color: var(--nav-accent);
     text-decoration: none;
 }
@@ -99,11 +112,15 @@ img { max-width: 100%; height: auto; }
 }
 
 /* ---------- 4. Shared layout pieces ---------- */
+/* Inner pages: a sheet of paper lying on the desk */
 .container {
-    width: 100%;
-    max-width: 800px;
-    margin: 2.5rem auto;
-    padding: 0 1.5rem;
+    width: calc(100% - 3rem);
+    max-width: 860px;
+    margin: 3rem auto;
+    padding: 2.75rem 3rem;
+    background: var(--paper);
+    border-radius: 4px;
+    box-shadow: var(--sheet-shadow);
 }
 
 .card {
@@ -113,6 +130,14 @@ img { max-width: 100%; height: auto; }
     box-shadow: var(--shadow);
     backdrop-filter: blur(3px);
     padding: 2rem;
+}
+/* Panels printed on a sheet: quieter than free-standing cards */
+.container .card {
+    background: #fff;
+    border: 1px solid #e9e0d3;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(45, 36, 30, 0.06);
+    backdrop-filter: none;
 }
 
 .btn {
@@ -133,14 +158,26 @@ img { max-width: 100%; height: auto; }
     text-align: center;
     padding: 1.5rem;
     font-size: 0.9rem;
-    color: var(--text-muted);
+    color: #f1e2cc;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 }
 
 /* ---------- 6. Small screens ---------- */
 @media (max-width: 600px) {
     .site-nav { padding: 1rem 1.25rem; }
-    .container { margin: 1.5rem auto; padding: 0 1rem; }
+    .container { width: calc(100% - 1.5rem); margin: 1rem auto; padding: 1.75rem 1.25rem; }
     .card { padding: 1.5rem; }
+}
+
+/* Phones: the emblem sits at the bottom of the page instead of floating over content */
+@media (max-width: 760px) {
+    body::after {
+        position: static;
+        align-self: flex-end;
+        width: 56px;
+        height: 56px;
+        margin: 0 14px 14px 0;
+    }
 }
 
 /* =========================================================
@@ -148,47 +185,64 @@ img { max-width: 100%; height: auto; }
    projects, resume) as we work through each page.
    ========================================================= */
 
-/* ---------- Home page (index.html) ---------- */
-.hero-container {
+/* ---------- Home page (index.html): a business card on the desk ---------- */
+.desk {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 2rem 1rem;
+    padding: 6rem 1.5rem;
+    overflow: hidden;                 /* props can run off the edge of the desk */
 }
 
-.hero {
-    max-width: 900px;
-    padding: 3rem;
-    display: flex;
+.desk-scene { position: relative; width: min(680px, 100%); }
+
+.business-card {
+    position: relative;
+    z-index: 1;
+    aspect-ratio: 7 / 4;              /* a real 3.5 x 2 in card */
+    display: grid;
+    grid-template-columns: auto 1fr;
     align-items: center;
-    gap: 3rem;
+    gap: 2.25rem;
+    padding: 2.5rem 2.75rem;
+    background:
+        radial-gradient(120% 90% at 20% 10%, #fffefb 0%, var(--paper) 55%, #f3ede2 100%);
+    border-radius: 6px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25), 0 22px 34px -10px rgba(20, 10, 4, 0.7);
+    transform: rotate(-2deg);
+    animation: card-land 0.7s cubic-bezier(.2, .8, .3, 1) both;
 }
 
-.hero-photo {
-    flex-shrink: 0;
-    width: 260px;
-    height: 260px;
-    object-fit: cover;               /* crops instead of stretching */
-    object-position: center top;     /* keeps your face in frame */
+@keyframes card-land {
+    from { opacity: 0; transform: translateY(-28px) rotate(-7deg); }
+    to   { opacity: 1; transform: rotate(-2deg); }
+}
+
+.card-emblem { position: absolute; top: 1.1rem; right: 1.1rem; width: 46px; }
+
+.card-photo {
+    width: 190px;
+    height: 190px;
+    object-fit: cover;
+    object-position: center top;
     border-radius: 50%;
-    border: 4px solid #fff;
-    box-shadow: 0 8px 24px rgba(45, 36, 30, 0.18);
+    box-shadow: 0 0 0 4px #fff, 0 6px 14px rgba(45, 36, 30, 0.25);
 }
 
-.hero-text { text-align: left; }
-.hero h1 { font-size: clamp(2.25rem, 5vw, 3.25rem); margin: 0 0 1rem; }
-.hero p  { font-size: 1.25rem; color: #4a3e35; margin: 0 0 2rem; }
+.card-text { text-align: left; }
+.card-text h1 { font-size: clamp(2rem, 4.5vw, 2.75rem); margin: 0 0 0.4rem; }
+.card-text p  { margin: 0 0 1.4rem; font-size: 1.05rem; color: #4a3e35; max-width: 30ch; }
 
 .actions {
     display: flex;
-    flex-direction: column;          /* button on top, icons underneath */
-    align-items: center;             /* centered under the text */
-    gap: 1.25rem;
+    flex-direction: column;
+    align-items: center;              /* button and icons centered under the text */
+    gap: 1rem;
 }
 
 .social-links { display: flex; gap: 1.25rem; }
 .social-links a {
-    font-size: 2rem;                 /* icon size */
+    font-size: 1.9rem;
     line-height: 1;
     text-decoration: none;
     transition: opacity 0.2s, transform 0.2s;
@@ -197,12 +251,33 @@ img { max-width: 100%; height: auto; }
 .social-links .linkedin { color: #0a66c2; }   /* LinkedIn's brand blue */
 .social-links a:hover   { opacity: 0.75; transform: translateY(-2px); }
 
-/* Tablets and phones: photo stacks on top, everything centers */
+/* Desk props (decorative) */
+.prop { position: absolute; z-index: 2; pointer-events: none; user-select: none; }
+.prop-coffee { width: 250px; top: -120px; right: -205px; }
+.prop-pastry { width: 310px; bottom: -150px; left: -235px; transform: rotate(-8deg); }
+
+@media (prefers-reduced-motion: reduce) {
+    .business-card { animation: none; }
+}
+
+/* Phones and small tablets: card stands upright, props peek in from the corners */
 @media (max-width: 760px) {
-    .hero { flex-direction: column; text-align: center; gap: 1.75rem; padding: 2rem 1.5rem; }
-    .hero-text { text-align: center; }
-    .hero-photo { width: 180px; height: 180px; }
-    .hero p { font-size: 1.1rem; }
+    .desk { padding: 5rem 1rem 6rem; }
+    .business-card {
+        aspect-ratio: auto;
+        grid-template-columns: 1fr;
+        justify-items: center;
+        gap: 1.25rem;
+        padding: 2.25rem 1.5rem 2rem;
+        transform: none;
+        animation-name: card-land-flat;
+    }
+    @keyframes card-land-flat { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: none; } }
+    .card-photo { width: 150px; height: 150px; }
+    .card-text, .card-text p { text-align: center; margin-left: auto; margin-right: auto; }
+    .prop { z-index: 0; }
+    .prop-coffee { width: 150px; top: -78px; right: -48px; }
+    .prop-pastry { width: 180px; bottom: -92px; left: -60px; }
 }
 
 /* ---------- Projects page (projects.html) ---------- */
@@ -281,7 +356,7 @@ img { max-width: 100%; height: auto; }
     background: var(--primary);
     border: 2px solid var(--bg-base);
 }
-.timeline .when { font-size: 0.85rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.04em; }
+.timeline .when { font-size: 0.85rem; font-weight: 700; color: var(--primary); }
 .timeline h3 { margin: 0.2rem 0 0.3rem; font-size: 1.1rem; }
 .timeline p { margin: 0; color: #4a3e35; }
 

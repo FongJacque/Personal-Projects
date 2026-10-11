@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+<defs>
+ <filter id="sh" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="7"/></filter>
+ <radialGradient id="saucer" cx=".45" cy=".4" r=".6"><stop offset="0" stop-color="#fffdf8"/><stop offset=".8" stop-color="#efe7da"/><stop offset="1" stop-color="#d9cdbb"/></radialGradient>
+ <radialGradient id="cup" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e6ddd0"/></radialGradient>
+ <radialGradient id="crema" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#7a4523"/><stop offset=".72" stop-color="#5e3218"/><stop offset=".9" stop-color="#b9783f"/><stop offset="1" stop-color="#d9a066"/></radialGradient>
+</defs>
+<ellipse cx="128" cy="132" rx="98" ry="98" fill="#1d0f06" opacity=".45" filter="url(#sh)"/>
+<circle cx="120" cy="120" r="96" fill="url(#saucer)"/>
+<circle cx="120" cy="120" r="70" fill="none" stroke="#d8ccb9" stroke-width="2"/>
+<ellipse cx="124" cy="126" rx="58" ry="58" fill="#3a2414" opacity=".25" filter="url(#sh)"/>
+<rect x="160" y="108" width="44" height="24" rx="12" fill="url(#cup)" stroke="#d6cbbb" stroke-width="1.5"/>
+<rect x="170" y="114" width="26" height="12" rx="6" fill="#efe6d8"/>
+<circle cx="120" cy="120" r="56" fill="url(#cup)" stroke="#d6cbbb" stroke-width="1.5"/>
+<circle cx="120" cy="120" r="46" fill="url(#crema)"/>
+<path d="M120 136 C 96 122, 100 100, 114 104 C 118 105, 120 109, 120 112 C 120 109, 122 105, 126 104 C 140 100, 144 122, 120 136 Z" fill="#f3dfc3" opacity=".92"/>
+<path d="M120 136 L 120 146" stroke="#f3dfc3" stroke-width="2.5" stroke-linecap="round" opacity=".85"/>
+<ellipse cx="104" cy="98" rx="14" ry="6" fill="#fff" opacity=".18" transform="rotate(-30 104 98)"/>
+</svg>

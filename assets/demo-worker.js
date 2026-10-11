@@ -15,9 +15,18 @@ importScripts(PYODIDE_URL + "pyodide.js");
 let pyodide = null;
 const send = (type, data) => postMessage({ type, data });
 
+const DOWNLOAD_HELP = "This is usually a brief network hiccup, a VPN or firewall, or an ad/privacy blocker " +
+    "blocking cdn.jsdelivr.net (where the browser downloads Python). Check that, then press Run again.";
+
+const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+
 async function startPython() {
     send("status", "Loading Python…");
-    pyodide = await loadPyodide({ indexURL: PYODIDE_URL });
+    try {
+        pyodide = await loadPyodide({ indexURL: PYODIDE_URL });
+    } catch (e) {
+        throw new Error("Couldn't download Python. " + DOWNLOAD_HELP);
+    }
     pyodide.setStdout({ batched: line => send("stdout", line) });
     pyodide.setStderr({ batched: line => send("stderr", line) });
     pyodide.setStdin({ stdin: () => null });   // demos can't ask for typed input; input() raises EOFError
@@ -164,10 +173,21 @@ while _todo:
             IMPORTS.add(_name.split(".")[0])
 `);
 
-        // Load those packages (Pyodide ships numpy, pandas, scikit-learn, OpenCV, ...)
-        send("status", "Loading packages…");
-        for (const code of pyodide.globals.get("SOURCES").toJs()) {
-            await pyodide.loadPackagesFromImports(code, { messageCallback: () => {} });
+        // Load those packages (Pyodide ships numpy, pandas, scikit-learn, OpenCV, ...).
+        // Big downloads sometimes get cut off, so failed ones are retried.
+        const sources = pyodide.globals.get("SOURCES").toJs();
+        for (let attempt = 1; attempt <= 3; attempt++) {
+            send("status", attempt === 1 ? "Loading packages…" : `Download interrupted, retrying packages (try ${attempt} of 3)…`);
+            let failed = false;
+            for (const code of sources) {
+                await pyodide.loadPackagesFromImports(code, {
+                    messageCallback: () => {},
+                    errorCallback: () => { failed = true; },
+                });
+            }
+            if (!failed) break;
+            if (attempt === 3) throw new Error("Couldn't download some of the Python packages this project needs. " + DOWNLOAD_HELP);
+            await wait(1500 * attempt);
         }
 
         // Anything not bundled with Pyodide: try installing it from PyPI
