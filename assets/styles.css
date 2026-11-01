@@ -732,6 +732,7 @@ button.btn:disabled { opacity: 0.6; cursor: wait; transform: none; }
 .resume-page { text-align: center; }
 .resume-page h1 { margin-bottom: 0.5rem; }
 .resume-page .subtitle { color: var(--text-muted); margin: 0 0 2rem; font-size: 1.1rem; }
+.resume-cta { max-width: 650px; margin: 1.5rem auto 2.5rem; }
 
 .resume-preview {
     position: relative;
